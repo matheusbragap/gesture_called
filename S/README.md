@@ -1,6 +1,6 @@
 # 1. Visão Geral
 
-### **1.1 Introdução:**
+### 1.1 **Introdução:**
 
 O projeto **Gesture Called** foi concebido para resolver o problema de centralização de demandas em empresas que operam com múltiplas lojas físicas. Em estruturas descentralizadas, o fluxo de comunicação entre funcionários de loja e a equipe de suporte costuma ser fragmentado.
 
