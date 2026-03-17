@@ -1,16 +1,11 @@
----
-description: >-
-  Esta seção descreve as funcionalidades e restrições técnicas do sistema
-  Gesture Called, servindo de guia para o desenvolvimento e para a validação do
-  software.
----
-
 # 2. Engenharia de Requisitos
+
+Esta seção descreve as funcionalidades e restrições técnicas do sistema Gesture Called, servindo de guia para o desenvolvimento e para a validação do software.
 
 ### Estrutura da seção
 
-* [2.1 Requisitos Funcionais](2.-engenharia-de-requisitos/2.1-requisitos-funcionais.md)
-* [2.2 Requisitos Não Funcionais](2.-engenharia-de-requisitos/2.2-requisitos-nao-funcionais.md)
+* [2.1 Requisitos Funcionais](2.1-requisitos-funcionais.md)
+* [2.2 Requisitos Não Funcionais](2.2-requisitos-nao-funcionais.md)
 
 ### Organização adotada
 
