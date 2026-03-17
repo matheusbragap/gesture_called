@@ -12,10 +12,3 @@ Esta seção descreve as funcionalidades e restrições técnicas do sistema Ges
 * Os requisitos funcionais foram agrupados por módulos do sistema.
 * Os requisitos não funcionais foram agrupados por categorias técnicas e de qualidade.
 
-
-
-| ID    | Requisito          | Descrição                                                                                                        |
-| ----- | ------------------ | ---------------------------------------------------------------------------------------------------------------- |
-| RNF01 | Portabilidade      | O sistema deve ser multiplataforma, desenvolvido em Flutter, funcionando em ambiente Web e dispositivos Android. |
-| RNF02 | Tecnologia Backend | A API deve ser construída em Node.js, utilizando uma arquitetura RESTful para comunicação com o frontend.        |
-|       |                    |                                                                                                                  |
