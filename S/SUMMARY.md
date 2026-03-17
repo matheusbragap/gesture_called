@@ -1,7 +1,7 @@
 # Table of contents
 
 * [1. Visão Geral](README.md)
-* [2. Engenharia de Requisitos](2.-engenharia-de-requisitos/README.md)
+* [2. Engenharia de Requisitos](1.-engenharia-de-requisitos.md)
   * [2.1 Requisitos Funcionais](2.-engenharia-de-requisitos/2.1-requisitos-funcionais.md)
   * [2.2 Requisitos Não Funcionais](2.-engenharia-de-requisitos/2.2-requisitos-nao-funcionais.md)
 * [3. Regras de Negócio](3.-regras-de-negocio/README.md)
