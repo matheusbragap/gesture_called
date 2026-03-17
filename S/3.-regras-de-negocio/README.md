@@ -1,8 +1,6 @@
-# 3. Regras de Negócio
+# 3. Regras e Fluxo do Chamado
 
 Esta seção reúne as regras operacionais e os comportamentos obrigatórios do sistema Gesture Called.
-
-O conteúdo foi dividido em subpáginas para facilitar leitura, manutenção e expansão futura.
 
 ### Estrutura da seção
 
