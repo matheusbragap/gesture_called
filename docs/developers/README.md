@@ -42,7 +42,7 @@ Siga este fluxo:
 
     <figure><img src=".gitbook/assets/image (5).png" alt=""><figcaption></figcaption></figure>
 7. Em **SDK Platforms**, selecione a versão do Android usada no projeto
-8.  Em **SDK Tools**, marque:<br>
+8.  Em **SDK Tools**, marque:
 
     * **Android SDK Build-Tools**
     * **Android SDK Command-line Tools (latest)**
@@ -66,14 +66,12 @@ Valide o ambiente:
 flutter doctor
 ```
 
-{% hint style="info" %}
-Acesse [Set up Android development](https://docs.flutter.dev/platform-integration/android/setup) para acessar a documentação Flutter no Android.
+{% hint style="warning" %}
+A opção "Android Virtual Device" é essencial se você pretende testar o seu aplicativo Flutter rodando direto na tela do seu computador com Windows 11, sem precisar de um celular físico conectado.
 {% endhint %}
 
-<figure><img src=".gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
-
 {% hint style="info" %}
-A opção "Android Virtual Device" é essencial se você pretende testar o seu aplicativo Flutter rodando direto na tela do seu computador com Windows 11, sem precisar de um celular físico conectado.
+Acesse [Set up Android development](https://docs.flutter.dev/platform-integration/android/setup) para acessar a documentação Flutter no Android.
 {% endhint %}
 
 ### Windows
