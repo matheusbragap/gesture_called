@@ -1,131 +1,102 @@
-# Guide Start
+# Configuração do Ambiente (Setup)
 
-## Como pegar o projeto
+Instale e valide estes itens antes de rodar o projeto.
 
-Use este fluxo para preparar o ambiente e baixar o código.
+### Ferramentas base
 
-Este projeto é um **monorepo**.
+#### Git
 
-Ele reúne o app em **Flutter** e o backend em **Node.js**.
-
-{% stepper %}
-{% step %}
-### Instale o Git
-
-O Git é necessário para clonar o repositório.
+Use o Git para clonar o repositório.
 
 * Baixe em [git-scm.com/install](https://git-scm.com/install)
-* Instale a versão do seu sistema operacional
-* Depois confirme a instalação:
+* Valide com:
 
 ```bash
 git --version
 ```
 
-Se o comando retornar uma versão, o Git está pronto.
-{% endstep %}
+#### Flutter SDK
 
-{% step %}
-### Instale o Flutter
+Use o Flutter para rodar o app.
 
-O aplicativo do projeto usa Flutter.
-
-* Baixe em [flutter.dev](https://docs.flutter.dev/get-started/install)
-* Instale a versão do seu sistema operacional
-* Depois confirme a instalação:
+* Siga a instalação rápida em [Flutter Quick Install](https://docs.flutter.dev/install/quick)
+* Valide com:
 
 ```bash
 flutter --version
+flutter doctor
 ```
 
-Se o comando retornar uma versão, o Flutter está pronto.
-{% endstep %}
+#### Node.js
 
-{% step %}
-### Instale o Node.js
-
-O backend do projeto usa Node.js.
+Use o Node.js no backend e nos scripts do projeto.
 
 * Baixe em [nodejs.org/pt-br/download](https://nodejs.org/pt-br/download)
 * Prefira a versão **LTS**
-* Depois confirme a instalação:
+* Valide com:
 
 ```bash
 node --version
 npm --version
 ```
 
-Se os dois comandos retornarem uma versão, o ambiente está pronto.
-{% endstep %}
+### Android
 
-{% step %}
-### Clone o repositório
+Para rodar no emulador, instale o **Android Studio**.
 
-Abra o terminal, vá para o caminho de sua preferência, e rode:
+Confirme estes componentes:
 
-```bash
-git clone https://github.com/matheusbragap/gesture_called.git
-```
+* Android SDK
+* Android SDK Platform
+* Android SDK Build-Tools
+* Android SDK Platform-Tools
+* Android SDK Command-line Tools
+* Android Emulator
 
-Isso cria uma pasta chamada `gesture_called` com o projeto.
-{% endstep %}
-
-{% step %}
-### Entre na pasta do projeto
-
-No terminal, acesse a pasta clonada:
+Aceite as licenças:
 
 ```bash
-cd gesture_called
+flutter doctor --android-licenses
 ```
-{% endstep %}
 
-{% step %}
-### Instale as dependências
-
-Com a pasta do projeto aberta, rode:
+Valide o ambiente:
 
 ```bash
-npm install
+flutter doctor
 ```
 
-Esse comando baixa as dependências do backend.
+### Windows
 
-{% hint style="info" %}
-Como este projeto é um monorepo, o app Flutter e o backend podem ter fluxos separados de instalação.
-{% endhint %}
-{% endstep %}
-{% endstepper %}
+Para rodar como app desktop, instale o **Visual Studio**.
 
-### Fluxo completo
+Durante a instalação, marque:
 
-Se quiser fazer tudo em sequência:
+* **Desktop development with C++**
+
+Depois valide:
 
 ```bash
-git clone https://github.com/matheusbragap/gesture_called.git
-cd gesture_called
-npm install
+flutter doctor
 ```
 
-### Verificações rápidas
+Se o alvo Windows não estiver habilitado:
 
-Antes de começar, confirme estes itens:
-
-* `git --version`
-* `flutter --version`
-* `node --version`
-* `npm --version`
-
-### Se algo falhar
+```bash
+flutter config --enable-windows-desktop
+```
 
 {% hint style="warning" %}
-Se `git` não funcionar, reinstale o Git e feche o terminal antes de abrir novamente.
+Para buildar ou rodar no Windows, o pacote de C++ fica no **Visual Studio**. Ele não fica no Android Studio.
 {% endhint %}
 
-{% hint style="warning" %}
-Se `node` ou `npm` não funcionar, reinstale o Node.js e abra um novo terminal.
-{% endhint %}
+### Checklist rápido
 
-{% hint style="info" %}
-O próximo passo natural é documentar como rodar o app Flutter e o backend localmente.
-{% endhint %}
+Confirme estes comandos sem erro:
+
+```bash
+git --version
+flutter --version
+flutter doctor
+node --version
+npm --version
+```
