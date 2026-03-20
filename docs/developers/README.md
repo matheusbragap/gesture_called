@@ -1,4 +1,4 @@
-# Configuração do Ambiente (Setup)
+# Configuração do Ambiente
 
 Instale e valide estes itens antes de rodar o projeto.
 
@@ -24,46 +24,57 @@ Use o Flutter para rodar o app.
 
 ```bash
 flutter --version
-flutter doctor
-```
-
-#### Node.js
-
-Use o Node.js no backend e nos scripts do projeto.
-
-* Baixe em [nodejs.org/pt-br/download](https://nodejs.org/pt-br/download)
-* Prefira a versão **LTS**
-* Valide com:
-
-```bash
-node --version
-npm --version
+flutter doctor # Para checar o funcionamento do Flutter
 ```
 
 ### Android
 
 Para rodar no emulador, instale o **Android Studio**.
 
-Confirme estes componentes:
+Siga este fluxo:
 
-* Android SDK
-* Android SDK Platform
-* Android SDK Build-Tools
-* Android SDK Platform-Tools
-* Android SDK Command-line Tools
-* Android Emulator
+1. Instale o Android Studio em [developer.android.com/studio/install?hl=pt-br](https://developer.android.com/studio/install?hl=pt-br)
+2. Abra o Android Studio
+3. Aceite as licenças
+4. Aguarde a IDE terminar a instalação dos componentes
+5. Abra **Configurações**
+6.  Vá em **Languages & Frameworks > Android SDK**<br>
 
-Aceite as licenças:
+    <figure><img src=".gitbook/assets/image (5).png" alt=""><figcaption></figcaption></figure>
+7. Em **SDK Platforms**, selecione a versão do Android usada no projeto
+8.  Em **SDK Tools**, marque:<br>
+
+    * **Android SDK Build-Tools**
+    * **Android SDK Command-line Tools (latest)**
+    * **Android Emulator**
+    * **Android SDK Platform-Tools**
+    * **Android Emulator Hypervisor Driver (installer)**
+
+    <figure><img src=".gitbook/assets/image (7).png" alt=""><figcaption></figcaption></figure>
+9. Clique em **Apply**
+10. Abra o terminal e rode:
 
 ```bash
 flutter doctor --android-licenses
 ```
+
+11. Aceite as licenças exibidas no terminal
 
 Valide o ambiente:
 
 ```bash
 flutter doctor
 ```
+
+{% hint style="info" %}
+Acesse [Set up Android development](https://docs.flutter.dev/platform-integration/android/setup) para acessar a documentação Flutter no Android.
+{% endhint %}
+
+<figure><img src=".gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
+
+{% hint style="info" %}
+A opção "Android Virtual Device" é essencial se você pretende testar o seu aplicativo Flutter rodando direto na tela do seu computador com Windows 11, sem precisar de um celular físico conectado.
+{% endhint %}
 
 ### Windows
 
@@ -73,30 +84,14 @@ Durante a instalação, marque:
 
 * **Desktop development with C++**
 
+<figure><img src=".gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
+
 Depois valide:
 
 ```bash
 flutter doctor
 ```
 
-Se o alvo Windows não estiver habilitado:
-
-```bash
-flutter config --enable-windows-desktop
-```
-
-{% hint style="warning" %}
-Para buildar ou rodar no Windows, o pacote de C++ fica no **Visual Studio**. Ele não fica no Android Studio.
+{% hint style="info" %}
+Para para mais informações, acesse a documentação do Flutter em [Set up Windows development](https://docs.flutter.dev/platform-integration/windows/setup).
 {% endhint %}
-
-### Checklist rápido
-
-Confirme estes comandos sem erro:
-
-```bash
-git --version
-flutter --version
-flutter doctor
-node --version
-npm --version
-```
