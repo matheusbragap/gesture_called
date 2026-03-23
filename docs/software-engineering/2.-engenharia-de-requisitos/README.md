@@ -1,6 +1,11 @@
-# 2. Engenharia de Requisitos
+---
+description: >-
+  Esta seção descreve as funcionalidades e restrições técnicas do sistema
+  ServFlow, servindo de guia para o desenvolvimento e para a validação do
+  software.
+---
 
-Esta seção descreve as funcionalidades e restrições técnicas do sistema Gesture Called, servindo de guia para o desenvolvimento e para a validação do software.
+# 2. Engenharia de Requisitos
 
 ### Estrutura da seção
 
