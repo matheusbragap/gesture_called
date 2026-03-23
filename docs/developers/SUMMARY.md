@@ -2,7 +2,7 @@
 
 ## 🚀 Primeiros Passos
 
-* [Configuração do Ambiente (Setup)](README.md)
+* [Configuração do Ambiente](README.md)
 * [Guia de Instalação e Execução](primeiros-passos/guia-de-instalacao-e-execucao.md)
 
 ## 📦 Dependências

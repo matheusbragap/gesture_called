@@ -1,6 +1,10 @@
-# 3. Regras e Fluxo do Chamado
+---
+description: >-
+  Esta seção reúne as regras operacionais e os comportamentos obrigatórios do
+  sistema Gesture Called.
+---
 
-Esta seção reúne as regras operacionais e os comportamentos obrigatórios do sistema Gesture Called.
+# 3. Regras e Fluxo do Chamado
 
 ### Estrutura da seção
 
