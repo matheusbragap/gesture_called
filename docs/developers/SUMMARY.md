@@ -7,7 +7,6 @@
 
 ## 📦 Dependências
 
-* [Bibliotecas do Backend (Node.js)](dependencias/bibliotecas-do-backend-node.js.md)
 * [Pacotes do Frontend (Flutter)](dependencias/pacotes-do-frontend-flutter.md)
 
 ## 🔌 Referência da API
@@ -18,5 +17,7 @@
 
 ## 🗄️ Banco de Dados
 
-* [Dicionário de Dados (Tabelas e Tipos)](banco-de-dados/dicionario-de-dados-tabelas-e-tipos.md)
-* [Variáveis de Ambiente (.env)](banco-de-dados/variaveis-de-ambiente-.env.md)
+* [Modelagem e Relacionamentos](banco-de-dados/modelagem-e-relacionamentos.md)
+* [Dicionário de Dados](banco-de-dados/dicionario-de-dados.md)
+* [Segurança e Regras](banco-de-dados/seguranca-e-regras.md)
+* [Variáveis de Ambiente](banco-de-dados/variaveis-de-ambiente.md)

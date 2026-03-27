@@ -39,14 +39,6 @@ Use estes arquivos como fonte de verdade:
 * `pubspec.yaml`
 * `pubspec.lock`
 
-### O que documentar aqui
-
-* pacotes principais
-* plugins nativos
-* versões usadas
-* dependências por plataforma
-* observações para Android e Windows
-
 {% hint style="info" %}
 Se houver dependências nativas, valide sempre com `flutter doctor` antes de rodar o app.
 {% endhint %}
