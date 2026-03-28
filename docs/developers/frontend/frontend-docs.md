@@ -1,9 +1,5 @@
 # 📱 Gesture Called — Documentação Técnica: Sprint Front-End (Flutter)
-
-> **Versão:** 1.0.0  
-> **Data:** 2025  
-> **Responsável:** Equipe de Desenvolvimento — Gesture Called  
-> **Stack:** Flutter (Dart) + Supabase  
+ 
 
 ---
 
