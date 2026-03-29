@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/ticket_model.dart';
 import 'new_ticket_view.dart';
 import 'profile_view.dart';
+import 'ticket_detail_view.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -13,10 +14,10 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   // Lista de chamados simulada com mais dados para testarmos as abas
   final List<TicketModel> _chamados = [
-    TicketModel(id: 1, titulo: 'Lâmpada queimada', descricao: 'Trocar no estoque', status: 'Aberto', unidadeOrigemId: 101),
-    TicketModel(id: 2, titulo: 'Sistema lento', descricao: 'PDV 3 travando constantemente', status: 'Em Andamento', unidadeOrigemId: 101),
-    TicketModel(id: 3, titulo: 'Impressora sem tinta', descricao: 'Trocar toner da impressora fiscal', status: 'Resolvido', unidadeOrigemId: 101),
-    TicketModel(id: 4, titulo: 'Ar condicionado', descricao: 'Não está gelando', status: 'Aberto', unidadeOrigemId: 101),
+    TicketModel(id: 1, titulo: 'Lâmpada queimada', descricao: 'Trocar no estoque', status: 'Aberto', unidadeOrigemId: 101, atendenteId: 'joão (TI)', dataAbertura: DateTime.now().subtract(const Duration(hours: 2))),
+    TicketModel(id: 2, titulo: 'Sistema lento', descricao: 'PDV 3 travando constantemente', status: 'Em Andamento', unidadeOrigemId: 101, atendenteId: 'maria (TI)', dataAbertura: DateTime.now().subtract(const Duration(hours: 5))),
+    TicketModel(id: 3, titulo: 'Impressora sem tinta', descricao: 'Trocar toner da impressora fiscal', status: 'Resolvido', unidadeOrigemId: 101, atendenteId: 'pedro (TI)', dataAbertura: DateTime.now().subtract(const Duration(hours: 10))),
+    TicketModel(id: 4, titulo: 'Ar condicionado', descricao: 'Não está gelando', status: 'Aberto', unidadeOrigemId: 101, atendenteId: 'ana (TI)', dataAbertura: DateTime.now().subtract(const Duration(hours: 1))),
   ];
 
   // Função limpa para filtrar a lista pela aba selecionada
@@ -62,8 +63,18 @@ class _HomeViewState extends State<HomeView> {
               child: Text(chamado.descricao, maxLines: 1, overflow: TextOverflow.ellipsis),
             ),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-            onTap: () {
-              // Próxima funcionalidade: Abrir os detalhes completos do chamado
+           onTap: () async {
+              // 1. O await faz a HomeView pausar e esperar a tela de detalhes fechar
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => TicketDetailView(chamado: chamado),
+                ),
+              );
+              
+              // 2. Quando você aperta em voltar, o código continua aqui.
+              // O setState força a HomeView a se redesenhar e mover o chamado de aba!
+              setState(() {}); 
             },
           ),
         );
@@ -140,11 +151,19 @@ class _HomeViewState extends State<HomeView> {
           ],
         ),   
         floatingActionButton: FloatingActionButton.extended(
-          onPressed: () {
-            Navigator.push(
+          onPressed: () async {
+            // O código "pausa" aqui e espera a tela fechar
+            final resultado = await Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const NewTicketView()),
             );
+
+            // Se o usuário não cancelou e o resultado for um TicketModel válido
+            if (resultado != null && resultado is TicketModel) {
+              setState(() {
+                _chamados.add(resultado); // Adiciona o novo chamado à lista
+              });
+            }
           },
           icon: const Icon(Icons.add),
           label: const Text('Novo Chamado'),

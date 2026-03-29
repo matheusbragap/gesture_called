@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../models/ticket_model.dart';
 class NewTicketView extends StatefulWidget {
   const NewTicketView({super.key});
 
@@ -32,8 +32,18 @@ class _NewTicketViewState extends State<NewTicketView> {
         const SnackBar(content: Text('Chamado aberto com sucesso!'), backgroundColor: Colors.green),
       );
       
+      // Criamos um chamado com os dados do formulário e um ID falso baseado na hora
+      final novoChamado = TicketModel(
+        id: DateTime.now().millisecondsSinceEpoch,
+        titulo: _tituloController.text,
+        descricao: _descricaoController.text,
+        status: 'Aberto',
+        unidadeOrigemId: 101,
+        dataAbertura: DateTime.now(), // <--- ADICIONE ESTA LINHA AQUI
+      );
       
-      Navigator.pop(context); 
+      // O pop agora carrega o 'novoChamado' na mochila de volta para a Home
+      Navigator.pop(context, novoChamado); 
       
     } catch (e) {
       if (!mounted) return;
