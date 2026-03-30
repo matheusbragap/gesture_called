@@ -19,7 +19,8 @@ class _HomeViewState extends State<HomeView> {
   bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
-
+  // ignore: prefer_final_fields
+  bool _isAdmin = true; // Simulando um usuário admin para mostrar o botão "Novo Colaborador"
   // --------------------------------------------------------
   // Lista de Chamados Simulada
   // --------------------------------------------------------
@@ -188,7 +189,9 @@ class _HomeViewState extends State<HomeView> {
               );
             },
           ),
-          // Botão Novo Colaborador
+
+         // Botão Novo Colaborador
+         if (_isAdmin)
           ListTile(
             leading: const Icon(Icons.person_add_alt_1),
             title: const Text('Novo Colaborador'),
