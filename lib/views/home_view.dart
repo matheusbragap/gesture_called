@@ -3,6 +3,7 @@ import '../models/ticket_model.dart';
 import 'new_ticket_view.dart';
 import 'profile_view.dart';
 import 'ticket_detail_view.dart';
+import 'signup_view.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -67,7 +68,6 @@ class _HomeViewState extends State<HomeView> {
   List<TicketModel> _filtrarPorStatus(String status) {
     return _chamados.where((c) => c.status == status).toList();
   }
-
   // --------------------------------------------------------
   // Widgets Construtores
   // --------------------------------------------------------
@@ -90,7 +90,7 @@ class _HomeViewState extends State<HomeView> {
       return Center(
         child: Text(
           _searchQuery.isEmpty ? 'Nenhum chamado $status.' : 'Nenhum chamado encontrado.',
-          style: const TextStyle(color: Colors.grey, fontSize: 16), 
+          style: const TextStyle(color: Colors.grey, fontSize: 16),
         ),
       );
     }
@@ -113,7 +113,7 @@ class _HomeViewState extends State<HomeView> {
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: status == 'Aberto'
-                    ? const Color.fromARGB(162, 255, 244, 246) 
+                    ? const Color.fromARGB(162, 255, 244, 246)
                     : status == 'Em Andamento'
                         ? const Color.fromARGB(162, 255, 244, 246)
                         : const Color.fromARGB(162, 255, 244, 246),
@@ -143,7 +143,7 @@ class _HomeViewState extends State<HomeView> {
             trailing: const Icon(
               Icons.arrow_forward_ios,
               size: 16,
-              color: Colors.grey, // Ícone de seta para indicar que é clicável
+              color: Colors.grey,
             ),
             onTap: () async {
               await Navigator.push(
@@ -173,7 +173,7 @@ class _HomeViewState extends State<HomeView> {
             accountEmail: Text('arlisson@email.com'),
             currentAccountPicture: CircleAvatar(
               backgroundColor: Colors.white,
-              child: Icon(Icons.person, color: Colors.blue, size: 40), 
+              child: Icon(Icons.person, color: Colors.blue, size: 40),
             ),
             decoration: BoxDecoration(color: Colors.blue),
           ),
@@ -188,6 +188,18 @@ class _HomeViewState extends State<HomeView> {
               );
             },
           ),
+          // Botão Novo Colaborador
+          ListTile(
+            leading: const Icon(Icons.person_add_alt_1),
+            title: const Text('Novo Colaborador'),
+            onTap: () {
+              Navigator.pop(context); // Fecha o menu lateral
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SignupView()),
+              );
+            },
+          ),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.red),
@@ -199,7 +211,7 @@ class _HomeViewState extends State<HomeView> {
         ],
       ),
     );
-  }
+  } 
 
   // --------------------------------------------------------
   // Build Principal da Tela
@@ -246,9 +258,9 @@ class _HomeViewState extends State<HomeView> {
             ),
           ],
           bottom: const TabBar(
-            labelColor: Colors.blue, // Cor do texto da aba selecionada
-            unselectedLabelColor: Colors.grey, // Cor do texto das abas não selecionadas
-            indicatorColor: Colors.blue, // Cor do indicador da aba selecionada
+            labelColor: Colors.blue,
+            unselectedLabelColor: Colors.grey,
+            indicatorColor: Colors.blue,
             tabs: [
               Tab(text: 'Abertos'),
               Tab(text: 'Em Andamento'),
