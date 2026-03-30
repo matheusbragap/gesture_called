@@ -1,19 +1,38 @@
 import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
-  runApp(const MainApp());
+import 'views/login_view.dart';
+import 'views/home_view.dart';
+
+void main()  async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Supabase.initialize(
+    url: 'https://your-supabase-url.supabase.co', //url do supabase
+    anonKey: 'your-anon-key', //chave do supabase
+  );
+  runApp(const GestureCalledApp());
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class GestureCalledApp extends StatelessWidget {
+  const GestureCalledApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      title: 'Gesture Called',
       debugShowCheckedModeBanner: false,
-      home: ThreeDShowcasePage(),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        useMaterial3: true,
+      ), 
+      
+      initialRoute: '/',
+      routes: {
+       '/': (context) => const LoginView(), 
+        '/home': (context) => const HomeView(), 
+        '/3d': (context) => const ThreeDShowcasePage(), 
+      },
     );
   }
 }
