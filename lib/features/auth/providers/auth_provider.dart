@@ -56,6 +56,11 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> refreshUser() async {
+    _user = await _repository.getCurrentUser();
+    notifyListeners();
+  }
+
   Future<bool> register({
     required String email,
     required String password,

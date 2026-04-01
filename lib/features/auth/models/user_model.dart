@@ -4,6 +4,7 @@ class UserModel {
   final String email;
   final String? phoneNumber;
   final int? companyId;
+  final int? departmentId;
   final bool isActive;
   final DateTime lastSeen;
   final DateTime createdAt;
@@ -15,6 +16,7 @@ class UserModel {
     required this.email,
     this.phoneNumber,
     this.companyId,
+    this.departmentId,
     required this.isActive,
     required this.lastSeen,
     required this.createdAt,
@@ -27,7 +29,12 @@ class UserModel {
       name: map['name'],
       email: map['email'],
       phoneNumber: map['phone_number'],
-      companyId: map['company_id'],
+      companyId: map['company_id'] != null
+          ? (map['company_id'] as num).toInt()
+          : null,
+      departmentId: map['department_id'] != null
+          ? (map['department_id'] as num).toInt()
+          : null,
       isActive: map['isActive'],
       lastSeen: DateTime.parse(map['lastSeen']),
       createdAt: DateTime.parse(map['created_at']),

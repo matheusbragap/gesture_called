@@ -167,7 +167,7 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          Colors.white.withOpacity(0.1),
+                          Colors.white.withValues(alpha: 0.1),
                           Colors.transparent,
                         ],
                       ),
@@ -184,7 +184,7 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          const Color(0xFF8B5CF6).withOpacity(0.1),
+                          const Color(0xFF8B5CF6).withValues(alpha: 0.1),
                           Colors.transparent,
                         ],
                       ),
@@ -201,7 +201,7 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          const Color(0xFF6366F1).withOpacity(0.05),
+                          const Color(0xFF6366F1).withValues(alpha: 0.05),
                           Colors.transparent,
                         ],
                       ),
@@ -236,12 +236,12 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                                         shape: BoxShape.circle,
                                         gradient: LinearGradient(
                                           colors: [
-                                            Colors.white.withOpacity(0.15),
-                                            Colors.white.withOpacity(0.05),
+                                            Colors.white.withValues(alpha: 0.15),
+                                            Colors.white.withValues(alpha: 0.05),
                                           ],
                                         ),
                                         border: Border.all(
-                                          color: Colors.white.withOpacity(0.2),
+                                          color: Colors.white.withValues(alpha: 0.2),
                                           width: 1,
                                         ),
                                       ),
@@ -276,8 +276,8 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   colors: [
-                                    const Color(0xFF8B5CF6).withOpacity(0.2),
-                                    const Color(0xFF6366F1).withOpacity(0.2),
+                                    const Color(0xFF8B5CF6).withValues(alpha: 0.2),
+                                    const Color(0xFF6366F1).withValues(alpha: 0.2),
                                   ],
                                 ),
                                 borderRadius: BorderRadius.circular(12),
@@ -288,14 +288,14 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                                   Icon(
                                     Icons.email_outlined,
                                     size: 16,
-                                    color: Colors.white.withOpacity(0.7),
+                                    color: Colors.white.withValues(alpha: 0.7),
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
                                     widget.email,
                                     style: TextStyle(
                                       fontSize: 13,
-                                      color: Colors.white.withOpacity(0.8),
+                                      color: Colors.white.withValues(alpha: 0.8),
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
@@ -348,7 +348,7 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                                       ? []
                                       : [
                                           BoxShadow(
-                                            color: const Color(0xFF8B5CF6).withOpacity(0.4),
+                                            color: const Color(0xFF8B5CF6).withValues(alpha: 0.4),
                                             blurRadius: 12,
                                             offset: const Offset(0, 4),
                                           ),
@@ -405,7 +405,7 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                                 text: TextSpan(
                                   style: TextStyle(
                                     fontSize: 12,
-                                    color: Colors.white.withOpacity(0.5),
+                                    color: Colors.white.withValues(alpha: 0.5),
                                   ),
                                   children: [
                                     const TextSpan(text: 'Ao criar uma conta, você concorda com os '),
@@ -435,7 +435,7 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                             Text(
                               'Versão 2.0.0',
                               style: TextStyle(
-                                color: Colors.white.withOpacity(0.3),
+                                color: Colors.white.withValues(alpha: 0.3),
                                 fontSize: 11,
                               ),
                               textAlign: TextAlign.center,
@@ -468,7 +468,7 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -486,16 +486,16 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
           labelText: isOptional ? '$label (opcional)' : label,
           hintText: hint,
           hintStyle: TextStyle(
-            color: Colors.white.withOpacity(0.3),
+            color: Colors.white.withValues(alpha: 0.3),
             fontSize: 14,
           ),
           labelStyle: TextStyle(
-            color: Colors.white.withOpacity(0.6),
+            color: Colors.white.withValues(alpha: 0.6),
             fontSize: 14,
           ),
           prefixIcon: Icon(
             icon,
-            color: Colors.white.withOpacity(0.5),
+            color: Colors.white.withValues(alpha: 0.5),
             size: 22,
           ),
           suffixIcon: isOptional
@@ -504,7 +504,7 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                   child: Text(
                     'Opcional',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.4),
+                      color: Colors.white.withValues(alpha: 0.4),
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
                     ),
@@ -512,17 +512,17 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                 )
               : null,
           filled: true,
-          fillColor: Colors.white.withOpacity(0.08),
+          fillColor: Colors.white.withValues(alpha: 0.08),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
             borderSide: BorderSide(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
             ),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
             borderSide: BorderSide(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               width: 1.5,
             ),
           ),

@@ -67,7 +67,6 @@ class _RegisterEmailPageState extends State<RegisterEmailPage>
       return;
     }
 
-    // Validação básica de email
     if (!email.contains('@') || !email.contains('.')) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -145,7 +144,7 @@ class _RegisterEmailPageState extends State<RegisterEmailPage>
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          Colors.white.withOpacity(0.1),
+                          Colors.white.withValues(alpha: 0.1),
                           Colors.transparent,
                         ],
                       ),
@@ -162,7 +161,7 @@ class _RegisterEmailPageState extends State<RegisterEmailPage>
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          const Color(0xFF8B5CF6).withOpacity(0.1),
+                          const Color(0xFF8B5CF6).withValues(alpha: 0.1),
                           Colors.transparent,
                         ],
                       ),
@@ -179,7 +178,7 @@ class _RegisterEmailPageState extends State<RegisterEmailPage>
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          const Color(0xFF6366F1).withOpacity(0.08),
+                          const Color(0xFF6366F1).withValues(alpha: 0.08),
                           Colors.transparent,
                         ],
                       ),
@@ -214,12 +213,12 @@ class _RegisterEmailPageState extends State<RegisterEmailPage>
                                         shape: BoxShape.circle,
                                         gradient: LinearGradient(
                                           colors: [
-                                            Colors.white.withOpacity(0.15),
-                                            Colors.white.withOpacity(0.05),
+                                            Colors.white.withValues(alpha: 0.15),
+                                            Colors.white.withValues(alpha: 0.05),
                                           ],
                                         ),
                                         border: Border.all(
-                                          color: Colors.white.withOpacity(0.2),
+                                          color: Colors.white.withValues(alpha: 0.2),
                                           width: 1,
                                         ),
                                       ),
@@ -251,16 +250,16 @@ class _RegisterEmailPageState extends State<RegisterEmailPage>
                                         colors: [
                                           const Color(
                                             0xFF8B5CF6,
-                                          ).withOpacity(0.2),
+                                          ).withValues(alpha: 0.2),
                                           const Color(
                                             0xFF6366F1,
-                                          ).withOpacity(0.2),
+                                          ).withValues(alpha: 0.2),
                                         ],
                                       ),
                                       border: Border.all(
                                         color: const Color(
                                           0xFF8B5CF6,
-                                        ).withOpacity(0.5),
+                                        ).withValues(alpha: 0.5),
                                         width: 1.5,
                                       ),
                                     ),
@@ -290,7 +289,7 @@ class _RegisterEmailPageState extends State<RegisterEmailPage>
                               'Vamos começar com seu email',
                               style: TextStyle(
                                 fontSize: 16,
-                                color: Colors.white.withOpacity(0.7),
+                                color: Colors.white.withValues(alpha: 0.7),
                                 height: 1.4,
                               ),
                             ),
@@ -326,7 +325,7 @@ class _RegisterEmailPageState extends State<RegisterEmailPage>
                                           BoxShadow(
                                             color: const Color(
                                               0xFF8B5CF6,
-                                            ).withOpacity(0.4),
+                                            ).withValues(alpha: 0.4),
                                             blurRadius: 12,
                                             offset: const Offset(0, 4),
                                           ),
@@ -388,7 +387,7 @@ class _RegisterEmailPageState extends State<RegisterEmailPage>
                                 Expanded(
                                   child: Container(
                                     height: 1,
-                                    color: Colors.white.withOpacity(0.2),
+                                    color: Colors.white.withValues(alpha: 0.2),
                                   ),
                                 ),
                                 Padding(
@@ -398,7 +397,7 @@ class _RegisterEmailPageState extends State<RegisterEmailPage>
                                   child: Text(
                                     'ou',
                                     style: TextStyle(
-                                      color: Colors.white.withOpacity(0.5),
+                                      color: Colors.white.withValues(alpha: 0.5),
                                       fontSize: 12,
                                     ),
                                   ),
@@ -406,7 +405,7 @@ class _RegisterEmailPageState extends State<RegisterEmailPage>
                                 Expanded(
                                   child: Container(
                                     height: 1,
-                                    color: Colors.white.withOpacity(0.2),
+                                    color: Colors.white.withValues(alpha: 0.2),
                                   ),
                                 ),
                               ],
@@ -421,7 +420,7 @@ class _RegisterEmailPageState extends State<RegisterEmailPage>
                                 Text(
                                   'Já tem uma conta? ',
                                   style: TextStyle(
-                                    color: Colors.white.withOpacity(0.7),
+                                    color: Colors.white.withValues(alpha: 0.7),
                                     fontSize: 14,
                                   ),
                                 ),
@@ -454,7 +453,7 @@ class _RegisterEmailPageState extends State<RegisterEmailPage>
                             Text(
                               'Versão 1.0.0',
                               style: TextStyle(
-                                color: Colors.white.withOpacity(0.3),
+                                color: Colors.white.withValues(alpha: 0.3),
                                 fontSize: 11,
                               ),
                               textAlign: TextAlign.center,
@@ -484,7 +483,7 @@ class _RegisterEmailPageState extends State<RegisterEmailPage>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -499,16 +498,16 @@ class _RegisterEmailPageState extends State<RegisterEmailPage>
           labelText: label,
           hintText: hint,
           hintStyle: TextStyle(
-            color: Colors.white.withOpacity(0.3),
+            color: Colors.white.withValues(alpha: 0.3),
             fontSize: 14,
           ),
           labelStyle: TextStyle(
-            color: Colors.white.withOpacity(0.6),
+            color: Colors.white.withValues(alpha: 0.6),
             fontSize: 14,
           ),
           prefixIcon: Icon(
             icon,
-            color: Colors.white.withOpacity(0.5),
+            color: Colors.white.withValues(alpha: 0.5),
             size: 22,
           ),
           suffixIcon: controller.text.isNotEmpty
@@ -516,21 +515,21 @@ class _RegisterEmailPageState extends State<RegisterEmailPage>
                   onTap: () => controller.clear(),
                   child: Icon(
                     Icons.clear_rounded,
-                    color: Colors.white.withOpacity(0.4),
+                    color: Colors.white.withValues(alpha: 0.4),
                     size: 20,
                   ),
                 )
               : null,
           filled: true,
-          fillColor: Colors.white.withOpacity(0.08),
+          fillColor: Colors.white.withValues(alpha: 0.08),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(color: Colors.white.withOpacity(0.2)),
+            borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
             borderSide: BorderSide(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               width: 1.5,
             ),
           ),
