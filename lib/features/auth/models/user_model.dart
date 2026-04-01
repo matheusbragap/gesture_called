@@ -1,0 +1,37 @@
+class UserModel {
+  final String id;
+  final String name;
+  final String email;
+  final String? phoneNumber;
+  final int? companyId;
+  final bool isActive;
+  final DateTime lastSeen;
+  final DateTime createdAt;
+  final String role;
+
+  UserModel({
+    required this.id,
+    required this.name,
+    required this.email,
+    this.phoneNumber,
+    this.companyId,
+    required this.isActive,
+    required this.lastSeen,
+    required this.createdAt,
+    required this.role,
+  });
+
+  factory UserModel.fromMap(Map<String, dynamic> map) {
+    return UserModel(
+      id: map['id'],
+      name: map['name'],
+      email: map['email'],
+      phoneNumber: map['phone_number'],
+      companyId: map['company_id'],
+      isActive: map['isActive'],
+      lastSeen: DateTime.parse(map['lastSeen']),
+      createdAt: DateTime.parse(map['created_at']),
+      role: map['role'] ?? 'employee',
+    );
+  }
+}
