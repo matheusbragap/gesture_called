@@ -63,6 +63,14 @@ class _AppShellState extends State<AppShell> {
               context.go('/invites');
             },
           ),
+          ListTile(
+            leading: const Icon(Icons.settings_outlined),
+            title: const Text('Configurações'),
+            onTap: () {
+              Navigator.pop(context);
+              context.go('/settings');
+            },
+          ),
           if (user?.role == UserRoles.admin) ...[
             ListTile(
               leading: const Icon(Icons.business),

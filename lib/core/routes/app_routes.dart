@@ -9,6 +9,7 @@ import '../../features/admin/pages/departments_page.dart';
 import '../../features/admin/pages/categories_page.dart';
 import '../../features/admin/pages/users_page.dart';
 import '../../features/admin/pages/invites_page.dart';
+import '../../features/settings/pages/settings_page.dart';
 import '../../features/tickets/pages/tickets_page.dart';
 import '../../features/auth/providers/auth_provider.dart';
 import '../widgets/app_shell.dart';
@@ -67,8 +68,18 @@ class AppRoutes {
             path: '/categories',
             builder: (context, state) => const CategoriesPage(),
           ),
-          GoRoute(path: '/users', builder: (context, state) => const UsersPage()),
-          GoRoute(path: '/invites', builder: (context, state) => const InvitesPage()),
+          GoRoute(
+            path: '/users',
+            builder: (context, state) => const UsersPage(),
+          ),
+          GoRoute(
+            path: '/invites',
+            builder: (context, state) => const InvitesPage(),
+          ),
+          GoRoute(
+            path: '/settings',
+            builder: (context, state) => const SettingsPage(),
+          ),
         ],
       ),
     ],
