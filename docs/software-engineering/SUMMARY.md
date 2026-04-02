@@ -7,6 +7,7 @@
 * [3. Regras e Fluxo do Chamado](3.-regras-e-fluxo-do-chamado/README.md)
   * [3.1 Regras de Negócio](3.-regras-e-fluxo-do-chamado/3.1-regras-de-negocio.md)
   * [3.2 Fluxo de Chamado](3.-regras-e-fluxo-do-chamado/3.2-fluxo-de-chamado.md)
+  * [3.3 Controle de Acesso e Perfis (RBAC)](3.-regras-e-fluxo-do-chamado/3.3-controle-de-acesso-e-perfis-rbac.md)
 * [4. Modelagem do Sistema](4.-modelagem-do-sistema/README.md)
   * [4.1 Diagrama de Casos de Uso (UML)](4.-modelagem-do-sistema/4.1-diagrama-de-casos-de-uso-uml.md)
   * [4.2 Diagrama de Classes (UML)](4.-modelagem-do-sistema/4.2-diagrama-de-classes-uml.md)

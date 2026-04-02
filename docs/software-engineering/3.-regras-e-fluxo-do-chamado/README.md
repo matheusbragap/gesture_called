@@ -10,6 +10,7 @@ description: >-
 
 * [3.1 Regras de Negócio](3.1-regras-de-negocio.md)
 * [3.2 Status do Chamado](3.2-fluxo-de-chamado.md)
+* [3.3 Controle de Acesso e Perfis (RBAC)](3.3-controle-de-acesso-e-perfis-rbac.md)
 
 ### Organização adotada
 
