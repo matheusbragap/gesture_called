@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../../features/auth/providers/auth_provider.dart';
 import '../constants/user_roles.dart';
 
+enum _ProfileMenuAction { account, logout }
+
 class AppShell extends StatefulWidget {
   final Widget child;
 
@@ -17,11 +19,21 @@ class _AppShellState extends State<AppShell> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   Future<void> _handleLogout() async {
-    Navigator.of(context).pop();
     final auth = context.read<AuthProvider>();
     await auth.logout();
     if (!mounted) return;
     context.go('/login');
+  }
+
+  Future<void> _handleProfileMenuSelection(_ProfileMenuAction action) async {
+    switch (action) {
+      case _ProfileMenuAction.account:
+        context.go('/profile');
+        break;
+      case _ProfileMenuAction.logout:
+        await _handleLogout();
+        break;
+    }
   }
 
   @override
@@ -36,6 +48,44 @@ class _AppShellState extends State<AppShell> {
           onPressed: () => _scaffoldKey.currentState?.openDrawer(),
         ),
         title: const Text('ServFlow'),
+        actions: [
+          PopupMenuButton<_ProfileMenuAction>(
+            tooltip: 'Perfil',
+            onSelected: _handleProfileMenuSelection,
+            icon: CircleAvatar(
+              radius: 16,
+              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+              child: Icon(
+                Icons.person_outline,
+                size: 18,
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
+              ),
+            ),
+            itemBuilder: (context) => const [
+              PopupMenuItem<_ProfileMenuAction>(
+                value: _ProfileMenuAction.account,
+                child: Row(
+                  children: [
+                    Icon(Icons.manage_accounts_outlined),
+                    SizedBox(width: 8),
+                    Text('Conta'),
+                  ],
+                ),
+              ),
+              PopupMenuItem<_ProfileMenuAction>(
+                value: _ProfileMenuAction.logout,
+                child: Row(
+                  children: [
+                    Icon(Icons.logout),
+                    SizedBox(width: 8),
+                    Text('Sair'),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(width: 8),
+        ],
       ),
       drawer: _buildDrawer(context, user),
       body: widget.child,
@@ -118,7 +168,10 @@ class _AppShellState extends State<AppShell> {
           ListTile(
             leading: const Icon(Icons.logout),
             title: const Text('Sair'),
-            onTap: _handleLogout,
+            onTap: () async {
+              Navigator.pop(context);
+              await _handleLogout();
+            },
           ),
         ],
       ),
