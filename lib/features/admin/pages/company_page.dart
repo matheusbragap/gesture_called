@@ -56,10 +56,11 @@ class _CompanyPageState extends State<CompanyPage> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Empresa criada e vinculada à sua conta.'),
+          content: const Text('Empresa criada com sucesso!'),
           backgroundColor: Colors.green.shade700,
         ),
       );
+      context.go('/home');
     } catch (e) {
       setState(() => _error = 'Não foi possível criar a empresa. Tente novamente.');
     } finally {

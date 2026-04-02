@@ -126,7 +126,7 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
         margin: const EdgeInsets.all(16),
       ),
     );
-    context.go('/login');
+    context.go('/home');
   }
 
   @override

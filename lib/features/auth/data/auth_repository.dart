@@ -66,7 +66,7 @@ class AuthRepository {
       'name': name,
       'email': email,
       'phone_number': phoneNumber,
-      'role': 'admin',
+      'role': 'iddle',
       'isActive': true,
     });
 

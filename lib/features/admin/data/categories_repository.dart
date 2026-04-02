@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import '../../../core/services/supabase_service.dart';
 
 class CategoriesRepository {
@@ -8,7 +10,11 @@ class CategoriesRepository {
       final data = await _client.from('categories').select().order('name');
       return List<Map<String, dynamic>>.from(data);
     } catch (e) {
-      print('ERRO CATEGORIAS: $e'); // Adicione isto
+      developer.log(
+        'Erro ao listar categorias',
+        name: 'CategoriesRepository',
+        error: e,
+      );
       rethrow;
     }
   }
@@ -26,7 +32,11 @@ class CategoriesRepository {
 
       return row;
     } catch (e) {
-      print('ERRO CREATE CATEGORIA: $e');
+      developer.log(
+        'Erro ao criar categoria',
+        name: 'CategoriesRepository',
+        error: e,
+      );
       rethrow;
     }
   }

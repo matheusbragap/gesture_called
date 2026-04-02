@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:go_router/go_router.dart';
 import '../../../core/constants/user_roles.dart';
+import '../../../core/widgets/ui/sf_content_header.dart';
 import '../../auth/providers/auth_provider.dart';
-import '../../admin/widgets/admin_app_drawer.dart';
 import '../../admin/widgets/no_company_banner.dart';
 import '../providers/tickets_provider.dart';
 import '../ticket_status_labels.dart';
@@ -17,12 +16,9 @@ class TicketsPage extends StatefulWidget {
 }
 
 class _TicketsPageState extends State<TicketsPage> {
-  late GlobalKey<ScaffoldState> _scaffoldKey;
-
   @override
   void initState() {
     super.initState();
-    _scaffoldKey = GlobalKey<ScaffoldState>();
     WidgetsBinding.instance.addPostFrameCallback((_) => _refreshTickets());
   }
 
@@ -31,10 +27,10 @@ class _TicketsPageState extends State<TicketsPage> {
     final u = auth.user;
     if (u == null) return;
     context.read<TicketsProvider>().loadTicketsForUser(
-          userId: u.id,
-          role: u.role,
-          companyId: u.companyId,
-        );
+      userId: u.id,
+      role: u.role,
+      companyId: u.companyId,
+    );
   }
 
   @override
@@ -47,75 +43,58 @@ class _TicketsPageState extends State<TicketsPage> {
     final hasCompany = user?.companyId != null;
 
     return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
-          onPressed: () => _scaffoldKey.currentState?.openDrawer(),
-        ),
-        title: const Row(
-          children: [
-            Icon(Icons.bolt, color: Color(0xFF8B5CF6)),
-            SizedBox(width: 12),
-            Text(
-              'ServFlow',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          if (hasCompany || isEmployee)
-            IconButton(
-              tooltip: 'Atualizar lista',
-              icon: const Icon(Icons.refresh),
-              onPressed: _refreshTickets,
-            ),
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Center(
-              child: Text(
-                user?.name ?? 'Usuário',
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-      drawer: isAdmin
-          ? AdminAppDrawer(
-              userName: user?.name ?? 'Usuário',
-              currentRoute: '/tickets',
-            )
-          : _buildStaffDrawer(
-              userName: user?.name ?? 'Usuário',
-              role: userRole,
-            ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Colors.blue.shade900,
-              Colors.purple.shade900,
-            ],
+            colors: [Colors.blue.shade900, Colors.purple.shade900],
           ),
         ),
         child: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              SfContentHeader(
+                title: 'Chamados',
+                subtitle: hasCompany
+                    ? 'Acompanhe e gerencie os chamados da operação.'
+                    : 'Sua conta ainda não está vinculada a uma empresa.',
+                variant: SfContentHeaderVariant.contrast,
+                actions: [
+                  if (hasCompany || isEmployee)
+                    IconButton.filledTonal(
+                      tooltip: 'Atualizar lista',
+                      style: IconButton.styleFrom(
+                        backgroundColor: Colors.white.withValues(alpha: 0.14),
+                        foregroundColor: Colors.white,
+                      ),
+                      onPressed: _refreshTickets,
+                      icon: const Icon(Icons.refresh_rounded),
+                    ),
+                  if (user != null)
+                    Container(
+                      constraints: const BoxConstraints(maxWidth: 170),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.14),
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Text(
+                        user.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
               if (!hasCompany) NoCompanyBanner(forAdmin: isAdmin),
               Expanded(
                 child: Consumer<TicketsProvider>(
@@ -162,8 +141,9 @@ class _TicketsPageState extends State<TicketsPage> {
                             ),
                             const SizedBox(height: 8),
                             Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 32),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 32,
+                              ),
                               child: Text(
                                 _emptyStateHint(
                                   hasCompany: hasCompany,
@@ -204,9 +184,7 @@ class _TicketsPageState extends State<TicketsPage> {
               onPressed: () {
                 showDialog(
                   context: context,
-                  builder: (context) => CreateTicketDialog(
-                    user: user!,
-                  ),
+                  builder: (context) => CreateTicketDialog(user: user!),
                 ).then((_) => _refreshTickets());
               },
               label: const Text('Novo Chamado'),
@@ -216,162 +194,6 @@ class _TicketsPageState extends State<TicketsPage> {
             )
           : null,
     );
-  }
-
-  /// Drawer para funcionário e atendente: ambos acessam Chamados (não é exclusivo do admin).
-  Widget _buildStaffDrawer({
-    required String userName,
-    required String? role,
-  }) {
-    final badge = _roleBadgeLabel(role);
-    final icon = role == UserRoles.attendant
-        ? Icons.headset_mic_outlined
-        : Icons.person_outline;
-
-    return Drawer(
-      child: Container(
-        color: Colors.white,
-        child: Column(
-          children: [
-            Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color(0xFF8B5CF6),
-                    Color(0xFF6366F1),
-                  ],
-                ),
-              ),
-              padding: const EdgeInsets.fromLTRB(16, 32, 16, 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 60,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white.withValues(alpha: 0.2),
-                    ),
-                    child: Center(
-                      child: Icon(
-                        icon,
-                        color: Colors.white,
-                        size: 32,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    userName,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      badge,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                children: [
-                  _buildDrawerItem(
-                    icon: Icons.assignment,
-                    label: 'Chamados',
-                    isActive: true,
-                    onTap: () => Navigator.pop(context),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-              child: _buildDrawerItem(
-                icon: Icons.logout,
-                label: 'Sair',
-                isLogout: true,
-                onTap: () {
-                  context.read<AuthProvider>().logout();
-                  Navigator.pop(context);
-                  context.go('/login');
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDrawerItem({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-    bool isActive = false,
-    bool isLogout = false,
-  }) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      decoration: BoxDecoration(
-        color: isActive
-            ? const Color(0xFF8B5CF6).withValues(alpha: 0.1)
-            : Colors.transparent,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: ListTile(
-        leading: Icon(
-          icon,
-          color: isActive
-              ? const Color(0xFF8B5CF6)
-              : isLogout
-                  ? Colors.red.shade600
-                  : Colors.grey.shade700,
-        ),
-        title: Text(
-          label,
-          style: TextStyle(
-            color: isActive
-                ? const Color(0xFF8B5CF6)
-                : isLogout
-                    ? Colors.red.shade600
-                    : Colors.grey.shade700,
-            fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-          ),
-        ),
-        onTap: onTap,
-      ),
-    );
-  }
-
-  static String _roleBadgeLabel(String? role) {
-    switch (role) {
-      case UserRoles.employee:
-        return 'Funcionário';
-      case UserRoles.attendant:
-        return 'Atendente';
-      default:
-        return 'Usuário';
-    }
   }
 
   static String _emptyStateHint({
@@ -441,8 +263,10 @@ class _TicketCard extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFF8B5CF6).withValues(alpha: 0.35),
                       borderRadius: BorderRadius.circular(20),

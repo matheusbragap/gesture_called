@@ -1,4 +1,5 @@
 import '../../../core/services/supabase_service.dart';
+import '../../../core/constants/user_roles.dart';
 import '../models/company_model.dart';
 
 class CompanyRepository {
@@ -23,6 +24,7 @@ class CompanyRepository {
 
     await _client.from('profiles').update({
       'company_id': company.id,
+      'role': UserRoles.admin,
     }).eq('id', adminUserId);
 
     return company;
@@ -77,6 +79,7 @@ class CompanyRepository {
     await _client.from('profiles').update({
       'company_id': null,
       'department_id': null,
+      'role': UserRoles.iddle,
     }).eq('company_id', companyId);
 
     await _client.from('companies').delete().eq('id', companyId);

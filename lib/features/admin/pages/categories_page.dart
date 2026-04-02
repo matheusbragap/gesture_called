@@ -122,7 +122,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
 
     try {
       if (isEdit) {
-        final id = existing?['id'];
+        final id = existing['id'];
         if (id == null) return;
         await _repo.update(
           id: (id as num).toInt(),

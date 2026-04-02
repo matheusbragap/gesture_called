@@ -75,7 +75,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
       return;
     }
 
-    context.go('/tickets');
+    context.go('/home');
   }
 
   @override
