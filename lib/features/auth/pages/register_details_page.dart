@@ -18,6 +18,9 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
@@ -35,13 +38,13 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
       curve: Curves.easeOut,
     );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutCubic,
-    ));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
 
     _animationController.forward();
   }
@@ -51,6 +54,7 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
     _nameController.dispose();
     _phoneController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     _animationController.dispose();
     super.dispose();
   }
@@ -58,12 +62,28 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
   Future<void> _handleRegister() async {
     final name = _nameController.text.trim();
     final password = _passwordController.text.trim();
+    final confirmPassword = _confirmPasswordController.text.trim();
     final phone = _phoneController.text.trim();
 
-    if (name.isEmpty || password.isEmpty) {
+    if (name.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Nome e senha são obrigatórios.'),
+          content: const Text('Nome, senha e confirmação são obrigatórios.'),
+          backgroundColor: Colors.red.shade600,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          margin: const EdgeInsets.all(16),
+        ),
+      );
+      return;
+    }
+
+    if (password != confirmPassword) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('As senhas não conferem.'),
           backgroundColor: Colors.red.shade600,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
@@ -120,9 +140,7 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
         content: const Text('Cadastro realizado com sucesso!'),
         backgroundColor: Colors.green.shade600,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         margin: const EdgeInsets.all(16),
       ),
     );
@@ -236,12 +254,18 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                                         shape: BoxShape.circle,
                                         gradient: LinearGradient(
                                           colors: [
-                                            Colors.white.withValues(alpha: 0.15),
-                                            Colors.white.withValues(alpha: 0.05),
+                                            Colors.white.withValues(
+                                              alpha: 0.15,
+                                            ),
+                                            Colors.white.withValues(
+                                              alpha: 0.05,
+                                            ),
                                           ],
                                         ),
                                         border: Border.all(
-                                          color: Colors.white.withValues(alpha: 0.2),
+                                          color: Colors.white.withValues(
+                                            alpha: 0.2,
+                                          ),
                                           width: 1,
                                         ),
                                       ),
@@ -256,7 +280,7 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                               },
                             ),
                             const SizedBox(height: 40),
-                            
+
                             // Título e email
                             const Text(
                               'Complete seu perfil',
@@ -276,8 +300,12 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   colors: [
-                                    const Color(0xFF8B5CF6).withValues(alpha: 0.2),
-                                    const Color(0xFF6366F1).withValues(alpha: 0.2),
+                                    const Color(
+                                      0xFF8B5CF6,
+                                    ).withValues(alpha: 0.2),
+                                    const Color(
+                                      0xFF6366F1,
+                                    ).withValues(alpha: 0.2),
                                   ],
                                 ),
                                 borderRadius: BorderRadius.circular(12),
@@ -295,7 +323,9 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                                     widget.email,
                                     style: TextStyle(
                                       fontSize: 13,
-                                      color: Colors.white.withValues(alpha: 0.8),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.8,
+                                      ),
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
@@ -303,7 +333,7 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                               ),
                             ),
                             const SizedBox(height: 48),
-                            
+
                             // Campos de formulário
                             _buildModernTextField(
                               controller: _nameController,
@@ -312,7 +342,7 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                               hint: 'Como você quer ser chamado?',
                             ),
                             const SizedBox(height: 20),
-                            
+
                             _buildModernTextField(
                               controller: _phoneController,
                               label: 'Telefone',
@@ -322,17 +352,91 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                               isOptional: true,
                             ),
                             const SizedBox(height: 20),
-                            
+
                             _buildModernTextField(
                               controller: _passwordController,
                               label: 'Senha',
                               icon: Icons.lock_outline_rounded,
                               hint: 'Mínimo 6 caracteres',
-                              obscureText: true,
+                              obscureText: _obscurePassword,
+                              onChanged: (_) {
+                                if (_passwordController.text.isEmpty &&
+                                    !_obscurePassword) {
+                                  setState(() {
+                                    _obscurePassword = true;
+                                  });
+                                  return;
+                                }
+                                setState(() {});
+                              },
+                              suffixIcon:
+                                  _passwordController.text.trim().isNotEmpty
+                                  ? IconButton(
+                                      tooltip: _obscurePassword
+                                          ? 'Mostrar senha'
+                                          : 'Ocultar senha',
+                                      onPressed: () {
+                                        setState(() {
+                                          _obscurePassword = !_obscurePassword;
+                                        });
+                                      },
+                                      icon: Icon(
+                                        _obscurePassword
+                                            ? Icons.visibility_off_outlined
+                                            : Icons.visibility_outlined,
+                                        color: Colors.white.withValues(
+                                          alpha: 0.6,
+                                        ),
+                                      ),
+                                    )
+                                  : null,
                             ),
-                            
+                            const SizedBox(height: 20),
+
+                            _buildModernTextField(
+                              controller: _confirmPasswordController,
+                              label: 'Confirmar senha',
+                              icon: Icons.lock_person_outlined,
+                              hint: 'Digite a mesma senha novamente',
+                              obscureText: _obscureConfirmPassword,
+                              onChanged: (_) {
+                                if (_confirmPasswordController.text.isEmpty &&
+                                    !_obscureConfirmPassword) {
+                                  setState(() {
+                                    _obscureConfirmPassword = true;
+                                  });
+                                  return;
+                                }
+                                setState(() {});
+                              },
+                              suffixIcon:
+                                  _confirmPasswordController.text
+                                      .trim()
+                                      .isNotEmpty
+                                  ? IconButton(
+                                      tooltip: _obscureConfirmPassword
+                                          ? 'Mostrar senha'
+                                          : 'Ocultar senha',
+                                      onPressed: () {
+                                        setState(() {
+                                          _obscureConfirmPassword =
+                                              !_obscureConfirmPassword;
+                                        });
+                                      },
+                                      icon: Icon(
+                                        _obscureConfirmPassword
+                                            ? Icons.visibility_off_outlined
+                                            : Icons.visibility_outlined,
+                                        color: Colors.white.withValues(
+                                          alpha: 0.6,
+                                        ),
+                                      ),
+                                    )
+                                  : null,
+                            ),
+
                             const SizedBox(height: 32),
-                            
+
                             // Botão de cadastro
                             SizedBox(
                               width: double.infinity,
@@ -341,14 +445,19 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                                 duration: const Duration(milliseconds: 200),
                                 decoration: BoxDecoration(
                                   gradient: const LinearGradient(
-                                    colors: [Color(0xFF8B5CF6), Color(0xFF6366F1)],
+                                    colors: [
+                                      Color(0xFF8B5CF6),
+                                      Color(0xFF6366F1),
+                                    ],
                                   ),
                                   borderRadius: BorderRadius.circular(16),
                                   boxShadow: isLoading
                                       ? []
                                       : [
                                           BoxShadow(
-                                            color: const Color(0xFF8B5CF6).withValues(alpha: 0.4),
+                                            color: const Color(
+                                              0xFF8B5CF6,
+                                            ).withValues(alpha: 0.4),
                                             blurRadius: 12,
                                             offset: const Offset(0, 4),
                                           ),
@@ -371,11 +480,15 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                                           width: 24,
                                           child: CircularProgressIndicator(
                                             strokeWidth: 2.5,
-                                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                  Colors.white,
+                                                ),
                                           ),
                                         )
                                       : const Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             Text(
                                               'Criar conta',
@@ -395,9 +508,9 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                                 ),
                               ),
                             ),
-                            
+
                             const SizedBox(height: 24),
-                            
+
                             // Termos e condições
                             Center(
                               child: RichText(
@@ -408,7 +521,10 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                                     color: Colors.white.withValues(alpha: 0.5),
                                   ),
                                   children: [
-                                    const TextSpan(text: 'Ao criar uma conta, você concorda com os '),
+                                    const TextSpan(
+                                      text:
+                                          'Ao criar uma conta, você concorda com os ',
+                                    ),
                                     TextSpan(
                                       text: 'Termos de Uso',
                                       style: TextStyle(
@@ -428,9 +544,9 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                                 ),
                               ),
                             ),
-                            
+
                             const SizedBox(height: 20),
-                            
+
                             // Versão
                             Text(
                               'Versão 2.0.0',
@@ -462,6 +578,8 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
     TextInputType keyboardType = TextInputType.text,
     bool obscureText = false,
     bool isOptional = false,
+    Widget? suffixIcon,
+    ValueChanged<String>? onChanged,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -478,10 +596,8 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
         controller: controller,
         keyboardType: keyboardType,
         obscureText: obscureText,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 16,
-        ),
+        onChanged: onChanged,
+        style: const TextStyle(color: Colors.white, fontSize: 16),
         decoration: InputDecoration(
           labelText: isOptional ? '$label (opcional)' : label,
           hintText: hint,
@@ -498,26 +614,26 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
             color: Colors.white.withValues(alpha: 0.5),
             size: 22,
           ),
-          suffixIcon: isOptional
-              ? Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Text(
-                    'Opcional',
-                    style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.4),
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                )
-              : null,
+          suffixIcon:
+              suffixIcon ??
+              (isOptional
+                  ? Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Text(
+                        'Opcional',
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.4),
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    )
+                  : null),
           filled: true,
           fillColor: Colors.white.withValues(alpha: 0.08),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(
-              color: Colors.white.withValues(alpha: 0.2),
-            ),
+            borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
@@ -528,10 +644,7 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(
-              color: Color(0xFF8B5CF6),
-              width: 2,
-            ),
+            borderSide: const BorderSide(color: Color(0xFF8B5CF6), width: 2),
           ),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 20,

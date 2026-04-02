@@ -97,14 +97,15 @@ class _AppShellState extends State<AppShell> {
               },
             ),
           ],
-          ListTile(
-            leading: const Icon(Icons.assignment),
-            title: const Text('Chamados'),
-            onTap: () {
-              Navigator.pop(context);
-              context.go('/tickets');
-            },
-          ),
+          if (user != null && user.role != UserRoles.iddle)
+            ListTile(
+              leading: const Icon(Icons.assignment),
+              title: const Text('Chamados'),
+              onTap: () {
+                Navigator.pop(context);
+                context.go('/tickets');
+              },
+            ),
           const Divider(height: 24),
           ListTile(
             leading: const Icon(Icons.logout),

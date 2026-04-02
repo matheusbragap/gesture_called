@@ -11,9 +11,11 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMixin {
+class _LoginPageState extends State<LoginPage>
+    with SingleTickerProviderStateMixin {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _obscurePassword = true;
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
@@ -25,20 +27,20 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    
+
     _fadeAnimation = CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeOut,
     );
-    
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutCubic,
-    ));
-    
+
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
+
     _animationController.forward();
   }
 
@@ -139,7 +141,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                     ),
                   ),
                 ),
-                
+
                 Center(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -170,7 +172,9 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                       ),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: const Color(0xFF8B5CF6).withValues(alpha: 0.3),
+                                          color: const Color(
+                                            0xFF8B5CF6,
+                                          ).withValues(alpha: 0.3),
                                           blurRadius: 20,
                                           spreadRadius: 5,
                                         ),
@@ -206,12 +210,19 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                             ),
                             const SizedBox(height: 8),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 6,
+                              ),
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   colors: [
-                                    const Color(0xFF8B5CF6).withValues(alpha: 0.2),
-                                    const Color(0xFF6366F1).withValues(alpha: 0.2),
+                                    const Color(
+                                      0xFF8B5CF6,
+                                    ).withValues(alpha: 0.2),
+                                    const Color(
+                                      0xFF6366F1,
+                                    ).withValues(alpha: 0.2),
                                   ],
                                 ),
                                 borderRadius: BorderRadius.circular(20),
@@ -226,7 +237,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                               ),
                             ),
                             const SizedBox(height: 56),
-                            
+
                             // Campos de texto
                             _buildModernTextField(
                               controller: _emailController,
@@ -239,11 +250,42 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                               controller: _passwordController,
                               label: 'Senha',
                               icon: Icons.lock_outlined,
-                              obscureText: true,
+                              obscureText: _obscurePassword,
+                              onChanged: (_) {
+                                if (_passwordController.text.isEmpty &&
+                                    !_obscurePassword) {
+                                  setState(() {
+                                    _obscurePassword = true;
+                                  });
+                                  return;
+                                }
+                                setState(() {});
+                              },
+                              suffixIcon:
+                                  _passwordController.text.trim().isNotEmpty
+                                  ? IconButton(
+                                      tooltip: _obscurePassword
+                                          ? 'Mostrar senha'
+                                          : 'Ocultar senha',
+                                      onPressed: () {
+                                        setState(() {
+                                          _obscurePassword = !_obscurePassword;
+                                        });
+                                      },
+                                      icon: Icon(
+                                        _obscurePassword
+                                            ? Icons.visibility_off_outlined
+                                            : Icons.visibility_outlined,
+                                        color: Colors.white.withValues(
+                                          alpha: 0.6,
+                                        ),
+                                      ),
+                                    )
+                                  : null,
                             ),
-                            
+
                             const SizedBox(height: 12),
-                            
+
                             // Esqueci a senha
                             Align(
                               alignment: Alignment.centerRight,
@@ -252,7 +294,9 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                   // Implementar recuperação de senha
                                 },
                                 style: TextButton.styleFrom(
-                                  foregroundColor: Colors.white.withValues(alpha: 0.7),
+                                  foregroundColor: Colors.white.withValues(
+                                    alpha: 0.7,
+                                  ),
                                 ),
                                 child: const Text(
                                   'Esqueceu a senha?',
@@ -263,9 +307,9 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                 ),
                               ),
                             ),
-                            
+
                             const SizedBox(height: 24),
-                            
+
                             // Botão de login
                             SizedBox(
                               width: double.infinity,
@@ -274,14 +318,19 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                 duration: const Duration(milliseconds: 200),
                                 decoration: BoxDecoration(
                                   gradient: const LinearGradient(
-                                    colors: [Color(0xFF8B5CF6), Color(0xFF6366F1)],
+                                    colors: [
+                                      Color(0xFF8B5CF6),
+                                      Color(0xFF6366F1),
+                                    ],
                                   ),
                                   borderRadius: BorderRadius.circular(16),
                                   boxShadow: isLoading
                                       ? []
                                       : [
                                           BoxShadow(
-                                            color: const Color(0xFF8B5CF6).withValues(alpha: 0.4),
+                                            color: const Color(
+                                              0xFF8B5CF6,
+                                            ).withValues(alpha: 0.4),
                                             blurRadius: 12,
                                             offset: const Offset(0, 4),
                                           ),
@@ -304,7 +353,10 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                           width: 24,
                                           child: CircularProgressIndicator(
                                             strokeWidth: 2.5,
-                                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                  Colors.white,
+                                                ),
                                           ),
                                         )
                                       : const Text(
@@ -318,9 +370,9 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                 ),
                               ),
                             ),
-                            
+
                             const SizedBox(height: 24),
-                            
+
                             // Divisor
                             Row(
                               children: [
@@ -331,11 +383,15 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                   ),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                  ),
                                   child: Text(
                                     'ou',
                                     style: TextStyle(
-                                      color: Colors.white.withValues(alpha: 0.5),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.5,
+                                      ),
                                       fontSize: 12,
                                     ),
                                   ),
@@ -348,9 +404,9 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                 ),
                               ],
                             ),
-                            
+
                             const SizedBox(height: 24),
-                            
+
                             // Cadastro
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -365,7 +421,9 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                 GestureDetector(
                                   onTap: () => context.go('/register'),
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 4,
+                                    ),
                                     child: Text(
                                       'Cadastre-se',
                                       style: TextStyle(
@@ -373,16 +431,18 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                         fontWeight: FontWeight.bold,
                                         fontSize: 14,
                                         decoration: TextDecoration.underline,
-                                        decorationColor: const Color(0xFF8B5CF6),
+                                        decorationColor: const Color(
+                                          0xFF8B5CF6,
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
                               ],
                             ),
-                            
+
                             const SizedBox(height: 20),
-                            
+
                             // Versão
                             Text(
                               'Versão 2.0.0',
@@ -411,6 +471,8 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
     required IconData icon,
     TextInputType keyboardType = TextInputType.text,
     bool obscureText = false,
+    Widget? suffixIcon,
+    ValueChanged<String>? onChanged,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -427,10 +489,8 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
         controller: controller,
         keyboardType: keyboardType,
         obscureText: obscureText,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 16,
-        ),
+        onChanged: onChanged,
+        style: const TextStyle(color: Colors.white, fontSize: 16),
         decoration: InputDecoration(
           labelText: label,
           labelStyle: TextStyle(
@@ -442,13 +502,12 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
             color: Colors.white.withValues(alpha: 0.5),
             size: 22,
           ),
+          suffixIcon: suffixIcon,
           filled: true,
           fillColor: Colors.white.withValues(alpha: 0.08),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(
-              color: Colors.white.withValues(alpha: 0.2),
-            ),
+            borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
@@ -459,10 +518,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(
-              color: Color(0xFF8B5CF6),
-              width: 2,
-            ),
+            borderSide: const BorderSide(color: Color(0xFF8B5CF6), width: 2),
           ),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 20,
