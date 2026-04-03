@@ -6,10 +6,18 @@ class AuthProvider extends ChangeNotifier {
   final _repository = AuthRepository();
 
   UserModel? _user;
+  String? _testingRoleOverride;
   bool _isLoading = false;
   String? _errorMessage;
 
-  UserModel? get user => _user;
+  UserModel? get user {
+    final current = _user;
+    final testingRole = _testingRoleOverride;
+    if (current == null || testingRole == null) {
+      return current;
+    }
+    return current.copyWith(role: testingRole);
+  }
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   bool get isAuthenticated => _user != null;
@@ -21,6 +29,7 @@ class AuthProvider extends ChangeNotifier {
 
     try {
       _user = await _repository.login(email, password);
+      _testingRoleOverride = null;
     } catch (e) {
       _errorMessage = 'Email ou senha incorretos.';
     } finally {
@@ -32,11 +41,15 @@ class AuthProvider extends ChangeNotifier {
   Future<void> logout() async {
     await _repository.logout();
     _user = null;
+    _testingRoleOverride = null;
     notifyListeners();
   }
 
   Future<void> checkSession() async {
     _user = await _repository.getCurrentUser();
+    if (_user == null) {
+      _testingRoleOverride = null;
+    }
     notifyListeners();
   }
 
@@ -78,6 +91,7 @@ class AuthProvider extends ChangeNotifier {
         name: name,
         phoneNumber: phoneNumber,
       );
+      _testingRoleOverride = null;
       return true;
     } catch (e) {
       _errorMessage = 'Erro ao cadastrar. Tente novamente.';
@@ -128,5 +142,11 @@ class AuthProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  void setTestingRoleOverride(String role) {
+    if (_user == null) return;
+    _testingRoleOverride = role;
+    notifyListeners();
   }
 }

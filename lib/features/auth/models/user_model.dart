@@ -41,4 +41,30 @@ class UserModel {
       role: map['role'] ?? 'employee',
     );
   }
+
+  UserModel copyWith({
+    String? id,
+    String? name,
+    String? email,
+    String? phoneNumber,
+    int? companyId,
+    int? departmentId,
+    bool? isActive,
+    DateTime? lastSeen,
+    DateTime? createdAt,
+    String? role,
+  }) {
+    return UserModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      companyId: companyId ?? this.companyId,
+      departmentId: departmentId ?? this.departmentId,
+      isActive: isActive ?? this.isActive,
+      lastSeen: lastSeen ?? this.lastSeen,
+      createdAt: createdAt ?? this.createdAt,
+      role: role ?? this.role,
+    );
+  }
 }

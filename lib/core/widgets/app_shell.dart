@@ -39,6 +39,10 @@ class _AppShellState extends State<AppShell> {
     }
   }
 
+  void _handleTestingRoleSelection(String role) {
+    context.read<AuthProvider>().setTestingRoleOverride(role);
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = context.watch<AuthProvider>().user;
@@ -238,6 +242,100 @@ class _AppShellState extends State<AppShell> {
                                 ),
                               ),
                             ],
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        PopupMenuButton<String>(
+                          tooltip: 'Trocar role (teste)',
+                          onSelected: _handleTestingRoleSelection,
+                          color: AppColors.surface,
+                          elevation: 10,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            side: const BorderSide(color: AppColors.surfaceMuted),
+                          ),
+                          itemBuilder: (context) => [
+                            PopupMenuItem<String>(
+                              value: UserRoles.admin,
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.admin_panel_settings_outlined,
+                                    size: 18,
+                                    color: user?.role == UserRoles.admin
+                                        ? AppColors.seed
+                                        : AppColors.ink700,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const Text('Administrador'),
+                                ],
+                              ),
+                            ),
+                            PopupMenuItem<String>(
+                              value: UserRoles.attendant,
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.support_agent_outlined,
+                                    size: 18,
+                                    color: user?.role == UserRoles.attendant
+                                        ? AppColors.seed
+                                        : AppColors.ink700,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const Text('Atendente'),
+                                ],
+                              ),
+                            ),
+                            PopupMenuItem<String>(
+                              value: UserRoles.employee,
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.badge_outlined,
+                                    size: 18,
+                                    color: user?.role == UserRoles.employee
+                                        ? AppColors.seed
+                                        : AppColors.ink700,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const Text('Funcionário'),
+                                ],
+                              ),
+                            ),
+                            PopupMenuItem<String>(
+                              value: UserRoles.iddle,
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.hourglass_empty_outlined,
+                                    size: 18,
+                                    color: user?.role == UserRoles.iddle
+                                        ? AppColors.seed
+                                        : AppColors.ink700,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const Text('Sem empresa'),
+                                ],
+                              ),
+                            ),
+                          ],
+                          child: Container(
+                            width: 36,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.2),
+                              ),
+                            ),
+                            alignment: Alignment.center,
+                            child: const Icon(
+                              Icons.swap_horiz_rounded,
+                              color: Colors.white,
+                              size: 20,
+                            ),
                           ),
                         ),
                       ],
