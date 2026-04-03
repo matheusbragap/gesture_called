@@ -46,15 +46,16 @@ class _AppShellState extends State<AppShell> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        backgroundColor: AppColors.seed,
+        backgroundColor: AppColors.ink900,
         foregroundColor: Colors.white,
+        elevation: 0,
         surfaceTintColor: Colors.transparent,
         flexibleSpace: const DecoratedBox(
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [AppColors.seed, AppColors.accent],
+              colors: [AppColors.ink900, AppColors.ink800],
             ),
           ),
         ),
@@ -62,27 +63,65 @@ class _AppShellState extends State<AppShell> {
           icon: const Icon(Icons.menu),
           onPressed: () => _scaffoldKey.currentState?.openDrawer(),
         ),
-        title: const Text(
-          'ServFlow',
-          style: TextStyle(fontWeight: FontWeight.w700),
+        title: InkWell(
+          borderRadius: BorderRadius.circular(8),
+          onTap: () => context.go('/home'),
+          child: const Padding(
+            padding: EdgeInsets.symmetric(vertical: 6),
+            child: Text(
+              'SERVFLOW',
+              style: TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: 18,
+                letterSpacing: 1.0,
+                color: Colors.white,
+              ),
+            ),
+          ),
         ),
         actions: [
           PopupMenuButton<_ProfileMenuAction>(
             tooltip: 'Perfil',
             onSelected: _handleProfileMenuSelection,
+            color: AppColors.surface,
+            elevation: 10,
+            shadowColor: Colors.black.withValues(alpha: 0.25),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+              side: const BorderSide(color: AppColors.surfaceMuted),
+            ),
             icon: const CircleAvatar(
               radius: 16,
               backgroundColor: Color(0x33FFFFFF),
               child: Icon(Icons.person_outline, size: 18, color: Colors.white),
             ),
-            itemBuilder: (context) => const [
+            itemBuilder: (context) => [
               PopupMenuItem<_ProfileMenuAction>(
                 value: _ProfileMenuAction.account,
                 child: Row(
                   children: [
-                    Icon(Icons.manage_accounts_outlined),
-                    SizedBox(width: 8),
-                    Text('Conta'),
+                    Container(
+                      width: 28,
+                      height: 28,
+                      decoration: BoxDecoration(
+                        color: AppColors.seed.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      alignment: Alignment.center,
+                      child: const Icon(
+                        Icons.manage_accounts_outlined,
+                        color: AppColors.seed,
+                        size: 18,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    const Text(
+                      'Conta',
+                      style: TextStyle(
+                        color: AppColors.ink900,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -90,9 +129,28 @@ class _AppShellState extends State<AppShell> {
                 value: _ProfileMenuAction.logout,
                 child: Row(
                   children: [
-                    Icon(Icons.logout),
-                    SizedBox(width: 8),
-                    Text('Sair'),
+                    Container(
+                      width: 28,
+                      height: 28,
+                      decoration: BoxDecoration(
+                        color: AppColors.danger.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      alignment: Alignment.center,
+                      child: const Icon(
+                        Icons.logout,
+                        color: AppColors.danger,
+                        size: 18,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    const Text(
+                      'Sair',
+                      style: TextStyle(
+                        color: AppColors.danger,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -228,56 +286,123 @@ class _AppShellState extends State<AppShell> {
                 child: ListView(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   children: [
-                    _buildDrawerItem(
-                      context: context,
-                      route: '/home',
-                      label: 'Início',
-                      icon: Icons.home_outlined,
-                      currentRoute: currentRoute,
-                      onTap: () {
-                        Navigator.pop(context);
-                        context.go('/home');
-                      },
-                    ),
-                    _buildDrawerItem(
-                      context: context,
-                      route: '/invites',
-                      label: 'Convites',
-                      icon: Icons.mail_outline,
-                      currentRoute: currentRoute,
-                      onTap: () {
-                        Navigator.pop(context);
-                        context.go('/invites');
-                      },
-                    ),
-                    _buildDrawerItem(
-                      context: context,
-                      route: '/settings',
-                      label: 'Configurações',
-                      icon: Icons.settings_outlined,
-                      currentRoute: currentRoute,
-                      onTap: () {
-                        Navigator.pop(context);
-                        context.go('/settings');
-                      },
-                    ),
-                    if (user?.role == UserRoles.admin) ...[
+                    if (user?.role == UserRoles.attendant) ...[
                       _buildDrawerItem(
                         context: context,
-                        route: '/company',
-                        label: 'Empresa',
-                        icon: Icons.business,
+                        route: '/home',
+                        label: 'Início',
+                        icon: Icons.home_outlined,
                         currentRoute: currentRoute,
                         onTap: () {
                           Navigator.pop(context);
-                          context.go('/company');
+                          context.go('/home');
+                        },
+                      ),
+                      _buildDrawerItem(
+                        context: context,
+                        route: '/tickets',
+                        label: 'Chamados',
+                        icon: Icons.assignment_outlined,
+                        currentRoute: currentRoute,
+                        onTap: () {
+                          Navigator.pop(context);
+                          context.go('/tickets');
+                        },
+                      ),
+                      _buildDrawerItem(
+                        context: context,
+                        route: '/my-attendances',
+                        label: 'Meus atendimentos',
+                        icon: Icons.badge_outlined,
+                        currentRoute: currentRoute,
+                        onTap: () {
+                          Navigator.pop(context);
+                          context.go('/my-attendances');
+                        },
+                      ),
+                      _buildDrawerItem(
+                        context: context,
+                        route: '/departments-overview',
+                        label: 'Departamentos',
+                        icon: Icons.store_mall_directory_outlined,
+                        currentRoute: currentRoute,
+                        onTap: () {
+                          Navigator.pop(context);
+                          context.go('/departments-overview');
+                        },
+                      ),
+                      _buildDrawerItem(
+                        context: context,
+                        route: '/team',
+                        label: 'Equipe',
+                        icon: Icons.groups_outlined,
+                        currentRoute: currentRoute,
+                        onTap: () {
+                          Navigator.pop(context);
+                          context.go('/team');
+                        },
+                      ),
+                      _buildDrawerItem(
+                        context: context,
+                        route: '/invites',
+                        label: 'Meus convites',
+                        icon: Icons.mail_outline,
+                        currentRoute: currentRoute,
+                        onTap: () {
+                          Navigator.pop(context);
+                          context.go('/invites');
+                        },
+                      ),
+                      _buildDrawerItem(
+                        context: context,
+                        route: '/settings',
+                        label: 'Configurações',
+                        icon: Icons.settings_outlined,
+                        currentRoute: currentRoute,
+                        onTap: () {
+                          Navigator.pop(context);
+                          context.go('/settings');
+                        },
+                      ),
+                    ] else if (user?.role == UserRoles.admin) ...[
+                      _buildDrawerItem(
+                        context: context,
+                        route: '/home',
+                        label: 'Início',
+                        icon: Icons.home_outlined,
+                        currentRoute: currentRoute,
+                        onTap: () {
+                          Navigator.pop(context);
+                          context.go('/home');
+                        },
+                      ),
+                      _buildDrawerItem(
+                        context: context,
+                        route: '/tickets',
+                        label: 'Chamados',
+                        icon: Icons.assignment_outlined,
+                        currentRoute: currentRoute,
+                        onTap: () {
+                          Navigator.pop(context);
+                          context.go('/tickets');
+                        },
+                      ),
+                      _buildDrawerItem(
+                        context: context,
+                        route: '/my-attendances',
+                        label: 'Meus atendimentos',
+                        icon: Icons.badge_outlined,
+                        currentRoute: currentRoute,
+                        onTap: () {
+                          Navigator.pop(context);
+                          context.go('/my-attendances');
                         },
                       ),
                       _buildDrawerItem(
                         context: context,
                         route: '/departments',
-                        label: 'Lojas (Departamentos)',
-                        icon: Icons.store,
+                        label: 'Departamentos',
+                        icon: Icons.store_outlined,
                         currentRoute: currentRoute,
                         onTap: () {
                           Navigator.pop(context);
@@ -298,7 +423,7 @@ class _AppShellState extends State<AppShell> {
                       _buildDrawerItem(
                         context: context,
                         route: '/users',
-                        label: 'Usuários',
+                        label: 'Funcionários',
                         icon: Icons.people,
                         currentRoute: currentRoute,
                         onTap: () {
@@ -306,19 +431,86 @@ class _AppShellState extends State<AppShell> {
                           context.go('/users');
                         },
                       ),
-                    ],
-                    if (user != null && user.role != UserRoles.iddle)
                       _buildDrawerItem(
                         context: context,
-                        route: '/tickets',
-                        label: 'Chamados',
-                        icon: Icons.assignment,
+                        route: '/company',
+                        label: 'Empresa',
+                        icon: Icons.business,
                         currentRoute: currentRoute,
                         onTap: () {
                           Navigator.pop(context);
-                          context.go('/tickets');
+                          context.go('/company');
                         },
                       ),
+                      _buildDrawerItem(
+                        context: context,
+                        route: '/invites',
+                        label: 'Meus convites',
+                        icon: Icons.mail_outline,
+                        currentRoute: currentRoute,
+                        onTap: () {
+                          Navigator.pop(context);
+                          context.go('/invites');
+                        },
+                      ),
+                      _buildDrawerItem(
+                        context: context,
+                        route: '/settings',
+                        label: 'Configurações',
+                        icon: Icons.settings_outlined,
+                        currentRoute: currentRoute,
+                        onTap: () {
+                          Navigator.pop(context);
+                          context.go('/settings');
+                        },
+                      ),
+                    ] else ...[
+                      _buildDrawerItem(
+                        context: context,
+                        route: '/home',
+                        label: 'Início',
+                        icon: Icons.home_outlined,
+                        currentRoute: currentRoute,
+                        onTap: () {
+                          Navigator.pop(context);
+                          context.go('/home');
+                        },
+                      ),
+                      _buildDrawerItem(
+                        context: context,
+                        route: '/invites',
+                        label: 'Meus convites',
+                        icon: Icons.mail_outline,
+                        currentRoute: currentRoute,
+                        onTap: () {
+                          Navigator.pop(context);
+                          context.go('/invites');
+                        },
+                      ),
+                      _buildDrawerItem(
+                        context: context,
+                        route: '/settings',
+                        label: 'Configurações',
+                        icon: Icons.settings_outlined,
+                        currentRoute: currentRoute,
+                        onTap: () {
+                          Navigator.pop(context);
+                          context.go('/settings');
+                        },
+                      ),
+                      if (user != null && user.role != UserRoles.iddle)
+                        _buildDrawerItem(
+                          context: context,
+                          route: '/tickets',
+                          label: 'Chamados',
+                          icon: Icons.assignment,
+                          currentRoute: currentRoute,
+                          onTap: () {
+                            Navigator.pop(context);
+                            context.go('/tickets');
+                          },
+                        ),
+                    ],
                     const SizedBox(height: 6),
                     Divider(
                       color: Colors.white.withValues(alpha: 0.14),
@@ -451,19 +643,25 @@ class _AppShellState extends State<AppShell> {
       case '/home':
         return 'Início';
       case '/invites':
-        return 'Convites';
+        return 'Meus convites';
       case '/settings':
         return 'Configurações';
       case '/company':
         return 'Empresa';
       case '/departments':
-        return 'Lojas';
+        return 'Departamentos';
       case '/categories':
         return 'Categorias';
       case '/users':
-        return 'Usuários';
+        return 'Funcionários';
       case '/tickets':
         return 'Chamados';
+      case '/my-attendances':
+        return 'Meus atendimentos';
+      case '/departments-overview':
+        return 'Departamentos';
+      case '/team':
+        return 'Equipe';
       case '/profile':
         return 'Conta';
       default:

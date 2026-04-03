@@ -35,12 +35,21 @@ class _CreateTicketDialogState extends State<CreateTicketDialog> {
 
   Future<void> _loadData() async {
     try {
-      final cats = await _repo.getCategories();
       final cid = widget.user.companyId;
-      var deps = <Map<String, dynamic>>[];
-      if (cid != null) {
-        deps = await _repo.getDepartmentsByCompany(cid);
+      if (cid == null) {
+        if (mounted) {
+          setState(() {
+            _categories = const [];
+            _departments = const [];
+            _loadingData = false;
+          });
+        }
+        return;
       }
+
+      final cats = await _repo.getCategories(cid);
+      final deps = await _repo.getDepartmentsByCompany(cid);
+
       if (mounted) {
         setState(() {
           _categories = cats;

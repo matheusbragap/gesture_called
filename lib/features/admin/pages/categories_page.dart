@@ -31,7 +31,8 @@ class _CategoriesPageState extends State<CategoriesPage> {
 
   Future<void> _load() async {
     final auth = context.read<AuthProvider>();
-    if (auth.user?.companyId == null) {
+    final companyId = auth.user?.companyId;
+    if (companyId == null) {
       setState(() {
         _loading = false;
         _items = [];
@@ -45,7 +46,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
     });
 
     try {
-      final data = await _repo.listAll();
+      final data = await _repo.listAll(companyId: companyId);
       if (mounted) {
         setState(() {
           _items = data;
@@ -64,7 +65,8 @@ class _CategoriesPageState extends State<CategoriesPage> {
 
   Future<void> _openForm({Map<String, dynamic>? existing}) async {
     final auth = context.read<AuthProvider>();
-    if (auth.user?.companyId == null) return;
+    final companyId = auth.user?.companyId;
+    if (companyId == null) return;
 
     final nameController =
         TextEditingController(text: existing?['name'] as String? ?? '');
@@ -126,6 +128,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
         if (id == null) return;
         await _repo.update(
           id: (id as num).toInt(),
+          companyId: companyId,
           name: name,
           description: descController.text.trim().isEmpty
               ? null
@@ -133,6 +136,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
         );
       } else {
         await _repo.create(
+          companyId: companyId,
           name: name,
           description: descController.text.trim().isEmpty
               ? null
@@ -151,6 +155,12 @@ class _CategoriesPageState extends State<CategoriesPage> {
   }
 
   Future<void> _delete(Map<String, dynamic> row) async {
+    final companyId = context.read<AuthProvider>().user?.companyId;
+    if (companyId == null) {
+      _snack('Sua conta precisa estar vinculada a uma empresa.', error: true);
+      return;
+    }
+
     final id = (row['id'] as num).toInt();
     final name = row['name'] as String;
 
@@ -164,7 +174,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
     if (!confirm || !mounted) return;
 
     try {
-      await _repo.deleteById(id);
+      await _repo.deleteById(id, companyId: companyId);
       await _load();
       if (mounted) _snack('Categoria excluída.');
     } catch (e) {
@@ -178,10 +188,16 @@ class _CategoriesPageState extends State<CategoriesPage> {
   }
 
   Future<void> _toggleActive(Map<String, dynamic> row) async {
+    final companyId = context.read<AuthProvider>().user?.companyId;
+    if (companyId == null) {
+      _snack('Sua conta precisa estar vinculada a uma empresa.', error: true);
+      return;
+    }
+
     final id = (row['id'] as num).toInt();
-    final active = row['isActive'] as bool;
+    final active = (row['is_active'] ?? false) as bool;
     try {
-      await _repo.setActive(id, !active);
+      await _repo.setActive(id, !active, companyId: companyId);
       await _load();
     } catch (e) {
       if (mounted) _snack('Erro ao atualizar status.', error: true);

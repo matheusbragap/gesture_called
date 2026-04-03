@@ -1,5 +1,6 @@
 import '../models/user_model.dart';
 import '../../../core/services/supabase_service.dart';
+import '../../../core/constants/user_roles.dart';
 
 
 class AuthRepository {
@@ -71,5 +72,22 @@ class AuthRepository {
     });
 
     return await _fetchProfile(userId);
+  }
+
+  Future<void> updateProfileName({
+    required String userId,
+    required String name,
+  }) async {
+    await _client.from('profiles').update({
+      'name': name,
+    }).eq('id', userId);
+  }
+
+  Future<void> leaveCompany({required String userId}) async {
+    await _client.from('profiles').update({
+      'company_id': null,
+      'department_id': null,
+      'role': UserRoles.iddle,
+    }).eq('id', userId);
   }
 }

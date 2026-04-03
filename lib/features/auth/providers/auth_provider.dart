@@ -87,4 +87,46 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<bool> updateProfileName(String name) async {
+    final currentUser = _user;
+    if (currentUser == null) return false;
+
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      await _repository.updateProfileName(userId: currentUser.id, name: name);
+      _user = await _repository.getCurrentUser();
+      return true;
+    } catch (_) {
+      _errorMessage = 'Não foi possível atualizar o nome.';
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> leaveCurrentCompany() async {
+    final currentUser = _user;
+    if (currentUser == null) return false;
+
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      await _repository.leaveCompany(userId: currentUser.id);
+      _user = await _repository.getCurrentUser();
+      return true;
+    } catch (_) {
+      _errorMessage = 'Não foi possível sair da empresa.';
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 }

@@ -25,7 +25,7 @@ class TicketsRepository {
         .from('tickets')
         .select(
           'id, title, description, status, created_at, '
-          'department_id, category_id, creator_employee_id, '
+          'department_id, category_id, creator_employee_id, current_attendant_id, '
           'departments ( id, name ), categories ( id, name )',
         )
         .eq('creator_employee_id', creatorId)
@@ -47,7 +47,7 @@ class TicketsRepository {
         .from('tickets')
         .select(
           'id, title, description, status, created_at, '
-          'department_id, category_id, creator_employee_id, '
+          'department_id, category_id, creator_employee_id, current_attendant_id, '
           'departments ( id, name ), categories ( id, name )',
         )
         .inFilter('department_id', ids)
@@ -65,11 +65,13 @@ class TicketsRepository {
     return List<Map<String, dynamic>>.from(data);
   }
 
-  Future<List<Map<String, dynamic>>> getCategories() async {
+  Future<List<Map<String, dynamic>>> getCategories(int companyId) async {
     final data = await _client
         .from('categories')
         .select()
-        .eq('is_active', true);
+        .eq('company_id', companyId)
+        .eq('is_active', true)
+        .order('name');
     return List<Map<String, dynamic>>.from(data);
   }
 }

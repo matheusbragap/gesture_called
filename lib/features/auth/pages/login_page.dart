@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
@@ -13,6 +15,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage>
     with SingleTickerProviderStateMixin {
+  static const int _passwordMaxLength = 72;
+
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
@@ -54,10 +58,16 @@ class _LoginPageState extends State<LoginPage>
 
   Future<void> _handleLogin() async {
     final auth = context.read<AuthProvider>();
+    final password = _passwordController.text.trim();
+
+    if (password.length > _passwordMaxLength) {
+      _showPasswordMaxLengthWarning();
+      return;
+    }
 
     await auth.login(
       _emailController.text.trim(),
-      _passwordController.text.trim(),
+      password,
     );
 
     if (!mounted) return;
@@ -78,6 +88,21 @@ class _LoginPageState extends State<LoginPage>
     }
 
     context.go('/home');
+  }
+
+  void _showPasswordMaxLengthWarning() {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('A senha no login pode ter no máximo 72 caracteres.'),
+        backgroundColor: Colors.orange.shade600,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        margin: const EdgeInsets.all(16),
+      ),
+    );
   }
 
   @override
@@ -244,6 +269,11 @@ class _LoginPageState extends State<LoginPage>
                               label: 'Email',
                               icon: Icons.email_outlined,
                               keyboardType: TextInputType.emailAddress,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.deny(
+                                  RegExp(r'\s'),
+                                ),
+                              ],
                             ),
                             const SizedBox(height: 20),
                             _buildModernTextField(
@@ -251,6 +281,15 @@ class _LoginPageState extends State<LoginPage>
                               label: 'Senha',
                               icon: Icons.lock_outlined,
                               obscureText: _obscurePassword,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.deny(
+                                  RegExp(r'\s'),
+                                ),
+                                _MaxLengthWithOverflowCallbackFormatter(
+                                  maxLength: _passwordMaxLength,
+                                  onOverflow: _showPasswordMaxLengthWarning,
+                                ),
+                              ],
                               onChanged: (_) {
                                 if (_passwordController.text.isEmpty &&
                                     !_obscurePassword) {
@@ -473,6 +512,7 @@ class _LoginPageState extends State<LoginPage>
     bool obscureText = false,
     Widget? suffixIcon,
     ValueChanged<String>? onChanged,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -489,6 +529,7 @@ class _LoginPageState extends State<LoginPage>
         controller: controller,
         keyboardType: keyboardType,
         obscureText: obscureText,
+        inputFormatters: inputFormatters,
         onChanged: onChanged,
         style: const TextStyle(color: Colors.white, fontSize: 16),
         decoration: InputDecoration(
@@ -526,6 +567,40 @@ class _LoginPageState extends State<LoginPage>
           ),
         ),
       ),
+    );
+  }
+}
+
+class _MaxLengthWithOverflowCallbackFormatter extends TextInputFormatter {
+  _MaxLengthWithOverflowCallbackFormatter({
+    required this.maxLength,
+    this.onOverflow,
+  });
+
+  final int maxLength;
+  final VoidCallback? onOverflow;
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    if (newValue.text.length <= maxLength) {
+      return newValue;
+    }
+
+    onOverflow?.call();
+
+    final truncated = newValue.text.substring(0, maxLength);
+    final safeOffset = math.max(
+      0,
+      math.min(truncated.length, newValue.selection.baseOffset),
+    );
+
+    return TextEditingValue(
+      text: truncated,
+      selection: TextSelection.collapsed(offset: safeOffset),
+      composing: TextRange.empty,
     );
   }
 }

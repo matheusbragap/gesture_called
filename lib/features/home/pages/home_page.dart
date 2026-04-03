@@ -3,9 +3,9 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../../core/constants/user_roles.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../admin/data/company_repository.dart';
 import '../../admin/data/company_requests_repository.dart';
-import '../../admin/models/company_model.dart';
-import '../../../core/services/supabase_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -31,31 +31,25 @@ class _HomePageState extends State<HomePage> {
         children: [
           Text(
             'Bem-vindo, ${user?.name ?? 'usuário'}!',
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(
             'Escolha como você quer começar',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade600,
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
           ),
           const SizedBox(height: 32),
           _IddleOptionCard(
             icon: Icons.add_business_outlined,
             title: 'Criar uma empresa',
             subtitle: 'Você será o administrador e poderá adicionar usuários',
-            onTap: () => context.go('/company'),
+            onTap: () => _showCreateCompanyDialog(context),
           ),
           const SizedBox(height: 16),
           _IddleOptionCard(
             icon: Icons.people_outline,
             title: 'Entrar em uma empresa',
-            subtitle: 'Solicite acesso a uma empresa existente',
+            subtitle: 'Solicite acesso por código da empresa',
             onTap: () => _showRequestAccessDialog(context),
           ),
         ],
@@ -90,9 +84,9 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(height: 24),
           Text(
             'Dashboard do Administrador',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           GridView.count(
@@ -102,13 +96,18 @@ class _HomePageState extends State<HomePage> {
             mainAxisSpacing: 16,
             children: [
               _DashboardCard(
-                icon: Icons.business,
-                title: 'Empresa',
-                onTap: () => context.go('/company'),
+                icon: Icons.assignment,
+                title: 'Chamados',
+                onTap: () => context.go('/tickets'),
+              ),
+              _DashboardCard(
+                icon: Icons.badge_outlined,
+                title: 'Meus atendimentos',
+                onTap: () => context.go('/my-attendances'),
               ),
               _DashboardCard(
                 icon: Icons.store,
-                title: 'Lojas',
+                title: 'Departamentos',
                 onTap: () => context.go('/departments'),
               ),
               _DashboardCard(
@@ -118,13 +117,13 @@ class _HomePageState extends State<HomePage> {
               ),
               _DashboardCard(
                 icon: Icons.people,
-                title: 'Usuários',
+                title: 'Funcionários',
                 onTap: () => context.go('/users'),
               ),
               _DashboardCard(
-                icon: Icons.assignment,
-                title: 'Chamados',
-                onTap: () => context.go('/tickets'),
+                icon: Icons.business,
+                title: 'Empresa',
+                onTap: () => context.go('/company'),
               ),
             ],
           ),
@@ -179,10 +178,17 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _showCreateCompanyDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => const _CreateCompanyDialog(),
+    );
+  }
+
   void _showRequestAccessDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => _RequestAccessDialog(),
+      builder: (context) => const _JoinCompanyByCodeDialog(),
     );
   }
 }
@@ -211,10 +217,7 @@ class _IddleOptionCard extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
-              colors: [
-                Color(0xFF3F5F7F),
-                Color(0xFF6B879E),
-              ],
+              colors: [Color(0xFF3F5F7F), Color(0xFF6B879E)],
             ),
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
@@ -309,43 +312,36 @@ class _DashboardCard extends StatelessWidget {
   }
 }
 
-class _RequestAccessDialog extends StatefulWidget {
-  const _RequestAccessDialog();
+class _JoinCompanyByCodeDialog extends StatefulWidget {
+  const _JoinCompanyByCodeDialog();
 
   @override
-  State<_RequestAccessDialog> createState() => _RequestAccessDialogState();
+  State<_JoinCompanyByCodeDialog> createState() =>
+      _JoinCompanyByCodeDialogState();
 }
 
-class _RequestAccessDialogState extends State<_RequestAccessDialog> {
+class _JoinCompanyByCodeDialogState extends State<_JoinCompanyByCodeDialog> {
   final _repo = CompanyRequestsRepository();
-  late Future<List<CompanyModel>> _companiesFuture;
-  CompanyModel? _selectedCompany;
+  final _codeController = TextEditingController();
+
   bool _submitting = false;
   String? _error;
 
   @override
-  void initState() {
-    super.initState();
-    _companiesFuture = _fetchCompanies();
-  }
-
-  Future<List<CompanyModel>> _fetchCompanies() async {
-    final data = await SupabaseService.client
-        .from('companies')
-        .select()
-        .eq('isActive', true)
-        .order('name', ascending: true);
-
-    return (data as List).map((e) => CompanyModel.fromMap(e)).toList();
+  void dispose() {
+    _codeController.dispose();
+    super.dispose();
   }
 
   Future<void> _submitRequest() async {
-    if (_selectedCompany == null) {
-      setState(() => _error = 'Selecione uma empresa');
+    final code = _codeController.text.trim();
+    if (code.isEmpty) {
+      setState(() => _error = 'Informe o código da empresa.');
       return;
     }
 
-    final user = context.read<AuthProvider>().user;
+    final auth = context.read<AuthProvider>();
+    final user = auth.user;
     if (user == null) return;
 
     setState(() {
@@ -354,21 +350,39 @@ class _RequestAccessDialogState extends State<_RequestAccessDialog> {
     });
 
     try {
-      await _repo.createRequest(
-        userId: user.id,
-        companyId: _selectedCompany!.id,
-      );
+      final cooldown = await _repo.getInviteCooldownRemaining(userId: user.id);
+      if (cooldown > Duration.zero) {
+        final seconds = (cooldown.inMilliseconds / 1000).ceil();
+        setState(() {
+          _error = 'Aguarde $seconds segundo(s) para enviar um novo convite.';
+        });
+        return;
+      }
+
+      final companyId = await _repo.findActiveCompanyIdByCode(code);
+      if (companyId == null) {
+        setState(() {
+          _error = 'Código da empresa inválido ou empresa inativa.';
+        });
+        return;
+      }
+
+      await _repo.createOrReplaceRequest(userId: user.id, companyId: companyId);
 
       if (!mounted) return;
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Requisição enviada! Aguarde aprovação do administrador.'),
-          backgroundColor: Colors.green.shade700,
+        const SnackBar(
+          content: Text(
+            'Convite enviado! Aguarde a aprovação do administrador da empresa.',
+          ),
         ),
       );
     } catch (e) {
-      setState(() => _error = 'Erro ao enviar requisição. Tente novamente.');
+      if (!mounted) return;
+      setState(() {
+        _error = 'Não foi possível enviar o convite. Tente novamente.';
+      });
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
@@ -376,80 +390,272 @@ class _RequestAccessDialogState extends State<_RequestAccessDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Entrar em uma empresa'),
-      content: SingleChildScrollView(
+    final cs = Theme.of(context).colorScheme;
+
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(20, 18, 20, 16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          color: cs.surface,
+          border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.7)),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              'Selecione a empresa que você deseja participar:',
-              style: TextStyle(fontSize: 14),
+            Row(
+              children: [
+                Container(
+                  width: 42,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    color: AppColors.seed.withValues(alpha: 0.14),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.group_add_outlined,
+                    color: AppColors.seed,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                const Expanded(
+                  child: Text(
+                    'Entrar em uma empresa',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            FutureBuilder<List<CompanyModel>>(
-              future: _companiesFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState != ConnectionState.done) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                final companies = snapshot.data ?? [];
-
-                if (companies.isEmpty) {
-                  return const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    child: Text(
-                      'Nenhuma empresa disponível no momento.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  );
-                }
-
-                return DropdownButton<CompanyModel>(
-                  isExpanded: true,
-                  hint: const Text('Selecione uma empresa'),
-                  value: _selectedCompany,
-                  items: companies
-                      .map((company) => DropdownMenuItem(
-                            value: company,
-                            child: Text(company.name),
-                          ))
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() => _selectedCompany = value);
-                  },
-                );
+            const SizedBox(height: 14),
+            Text(
+              'Digite o código da empresa para enviar seu convite de acesso.',
+              style: TextStyle(
+                fontSize: 13,
+                color: cs.onSurfaceVariant,
+                height: 1.35,
+              ),
+            ),
+            const SizedBox(height: 14),
+            TextField(
+              controller: _codeController,
+              textInputAction: TextInputAction.done,
+              onSubmitted: (_) {
+                if (!_submitting) _submitRequest();
               },
+              decoration: const InputDecoration(
+                labelText: 'Código da empresa',
+                hintText: 'Ex.: 123',
+                prefixIcon: Icon(Icons.key_outlined),
+              ),
             ),
             if (_error != null) ...[
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
               Text(
                 _error!,
-                style: TextStyle(color: Colors.red.shade700),
+                style: const TextStyle(
+                  color: AppColors.danger,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12.5,
+                ),
               ),
             ],
+            const SizedBox(height: 18),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: _submitting
+                        ? null
+                        : () => Navigator.pop(context),
+                    child: const Text('Cancelar'),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: FilledButton(
+                    onPressed: _submitting ? null : _submitRequest,
+                    child: _submitting
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Text('Enviar convite'),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: _submitting ? null : () => Navigator.pop(context),
-          child: const Text('Cancelar'),
+    );
+  }
+}
+
+class _CreateCompanyDialog extends StatefulWidget {
+  const _CreateCompanyDialog();
+
+  @override
+  State<_CreateCompanyDialog> createState() => _CreateCompanyDialogState();
+}
+
+class _CreateCompanyDialogState extends State<_CreateCompanyDialog> {
+  final _repo = CompanyRepository();
+  final _nameController = TextEditingController();
+  final _descriptionController = TextEditingController();
+
+  bool _submitting = false;
+  String? _error;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submitCreate() async {
+    final name = _nameController.text.trim();
+    if (name.isEmpty) {
+      setState(() => _error = 'Informe o nome da empresa.');
+      return;
+    }
+
+    final auth = context.read<AuthProvider>();
+    final user = auth.user;
+    if (user == null) return;
+
+    setState(() {
+      _submitting = true;
+      _error = null;
+    });
+
+    try {
+      await _repo.createCompany(
+        name: name,
+        description: _descriptionController.text.trim().isEmpty
+            ? null
+            : _descriptionController.text.trim(),
+        adminUserId: user.id,
+      );
+      await auth.refreshUser();
+
+      if (!mounted) return;
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Empresa criada com sucesso!')),
+      );
+      context.go('/home');
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _error = 'Não foi possível criar a empresa. Tente novamente.';
+      });
+    } finally {
+      if (mounted) setState(() => _submitting = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(20, 18, 20, 16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          color: cs.surface,
+          border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.7)),
         ),
-        FilledButton(
-          onPressed: _submitting ? null : _submitRequest,
-          child: _submitting
-              ? const SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Text('Solicitar'),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 42,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    color: AppColors.seed.withValues(alpha: 0.14),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.add_business_outlined,
+                    color: AppColors.seed,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                const Expanded(
+                  child: Text(
+                    'Criar empresa',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            TextField(
+              controller: _nameController,
+              textInputAction: TextInputAction.next,
+              decoration: const InputDecoration(
+                labelText: 'Nome da empresa',
+                prefixIcon: Icon(Icons.business_center_outlined),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _descriptionController,
+              maxLines: 3,
+              decoration: const InputDecoration(
+                labelText: 'Descrição (opcional)',
+                prefixIcon: Icon(Icons.notes_outlined),
+              ),
+            ),
+            if (_error != null) ...[
+              const SizedBox(height: 12),
+              Text(
+                _error!,
+                style: const TextStyle(
+                  color: AppColors.danger,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12.5,
+                ),
+              ),
+            ],
+            const SizedBox(height: 18),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: _submitting
+                        ? null
+                        : () => Navigator.pop(context),
+                    child: const Text('Cancelar'),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: FilledButton(
+                    onPressed: _submitting ? null : _submitCreate,
+                    child: _submitting
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Text('Criar empresa'),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

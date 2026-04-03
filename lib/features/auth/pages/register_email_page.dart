@@ -197,42 +197,7 @@ class _RegisterEmailPageState extends State<RegisterEmailPage>
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Botão voltar animado
-                            TweenAnimationBuilder(
-                              tween: Tween<double>(begin: 0, end: 1),
-                              duration: const Duration(milliseconds: 500),
-                              builder: (context, value, child) {
-                                return Transform.scale(
-                                  scale: value,
-                                  child: GestureDetector(
-                                    onTap: () => context.go('/login'),
-                                    child: Container(
-                                      width: 44,
-                                      height: 44,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        gradient: LinearGradient(
-                                          colors: [
-                                            Colors.white.withValues(alpha: 0.15),
-                                            Colors.white.withValues(alpha: 0.05),
-                                          ],
-                                        ),
-                                        border: Border.all(
-                                          color: Colors.white.withValues(alpha: 0.2),
-                                          width: 1,
-                                        ),
-                                      ),
-                                      child: const Icon(
-                                        Icons.arrow_back_rounded,
-                                        color: Colors.white,
-                                        size: 24,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                            const SizedBox(height: 48),
+                            const SizedBox(height: 8),
 
                             // Ícone animado
                             TweenAnimationBuilder(
@@ -492,6 +457,9 @@ class _RegisterEmailPageState extends State<RegisterEmailPage>
       child: TextField(
         controller: controller,
         keyboardType: TextInputType.emailAddress,
+        inputFormatters: [
+          FilteringTextInputFormatter.deny(RegExp(r'\s')),
+        ],
         autofocus: true,
         style: const TextStyle(color: Colors.white, fontSize: 16),
         decoration: InputDecoration(

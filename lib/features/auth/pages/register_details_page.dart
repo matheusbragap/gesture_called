@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
@@ -15,6 +17,12 @@ class RegisterDetailsPage extends StatefulWidget {
 
 class _RegisterDetailsPageState extends State<RegisterDetailsPage>
     with SingleTickerProviderStateMixin {
+  static const int _nameMaxLength = 24;
+  static const int _passwordMinLength = 6;
+  static const int _passwordMaxLength = 72;
+  static final RegExp _phonePattern = RegExp(r'^\(\d{2}\) \d \d{4}-\d{4}$');
+  static final RegExp _nameConsecutiveSpacesPattern = RegExp(r' {2,}');
+
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -60,15 +68,101 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
   }
 
   Future<void> _handleRegister() async {
-    final name = _nameController.text.trim();
+    final rawName = _nameController.text;
     final password = _passwordController.text.trim();
     final confirmPassword = _confirmPasswordController.text.trim();
     final phone = _phoneController.text.trim();
 
-    if (name.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+    if (rawName.trim().isEmpty || password.isEmpty || confirmPassword.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text('Nome, senha e confirmação são obrigatórios.'),
+          backgroundColor: Colors.red.shade600,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          margin: const EdgeInsets.all(16),
+        ),
+      );
+      return;
+    }
+
+    if (rawName.length > _nameMaxLength) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'O nome deve ter no máximo $_nameMaxLength caracteres.',
+          ),
+          backgroundColor: Colors.red.shade600,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          margin: const EdgeInsets.all(16),
+        ),
+      );
+      return;
+    }
+
+    if (rawName.startsWith(' ') || rawName.endsWith(' ')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            'O nome não pode começar ou terminar com espaço.',
+          ),
+          backgroundColor: Colors.red.shade600,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          margin: const EdgeInsets.all(16),
+        ),
+      );
+      return;
+    }
+
+    if (_nameConsecutiveSpacesPattern.hasMatch(rawName)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            'O nome não pode ter dois ou mais espaços seguidos.',
+          ),
+          backgroundColor: Colors.red.shade600,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          margin: const EdgeInsets.all(16),
+        ),
+      );
+      return;
+    }
+
+    if (password.length < _passwordMinLength ||
+        password.length > _passwordMaxLength) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'A senha deve ter entre $_passwordMinLength e $_passwordMaxLength caracteres.',
+          ),
+          backgroundColor: Colors.red.shade600,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          margin: const EdgeInsets.all(16),
+        ),
+      );
+      return;
+    }
+
+    if (confirmPassword.length > _passwordMaxLength) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'A confirmação de senha deve ter no máximo $_passwordMaxLength caracteres.',
+          ),
           backgroundColor: Colors.red.shade600,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
@@ -95,10 +189,12 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
       return;
     }
 
-    if (password.length < 6) {
+    if (phone.isNotEmpty && !_phonePattern.hasMatch(phone)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('A senha deve ter pelo menos 6 caracteres.'),
+          content: const Text(
+            'Telefone inválido. Use o formato (99) 9 9999-9999.',
+          ),
           backgroundColor: Colors.red.shade600,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
@@ -114,7 +210,7 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
     final success = await auth.register(
       email: widget.email,
       password: password,
-      name: name,
+      name: rawName,
       phoneNumber: phone.isEmpty ? null : phone,
     );
 
@@ -340,6 +436,17 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                               label: 'Nome completo',
                               icon: Icons.person_outline_rounded,
                               hint: 'Como você quer ser chamado?',
+                              onChanged: (_) => setState(() {}),
+                              suffixIcon: _nameController.text.isNotEmpty
+                                  ? _buildNameCounterSuffix(
+                                      length: _nameController.text.length,
+                                    )
+                                  : null,
+                              inputFormatters: const [
+                                _RegisterNameFormatter(
+                                  maxLength: _nameMaxLength,
+                                ),
+                              ],
                             ),
                             const SizedBox(height: 20),
 
@@ -347,9 +454,12 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                               controller: _phoneController,
                               label: 'Telefone',
                               icon: Icons.phone_outlined,
-                              hint: '(11) 99999-9999',
+                              hint: '(99) 9 9999-9999',
                               keyboardType: TextInputType.phone,
                               isOptional: true,
+                              inputFormatters: const [
+                                _RegisterPhoneMaskFormatter(),
+                              ],
                             ),
                             const SizedBox(height: 20),
 
@@ -359,6 +469,12 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                               icon: Icons.lock_outline_rounded,
                               hint: 'Mínimo 6 caracteres',
                               obscureText: _obscurePassword,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.deny(RegExp(r'\s')),
+                                LengthLimitingTextInputFormatter(
+                                  _passwordMaxLength,
+                                ),
+                              ],
                               onChanged: (_) {
                                 if (_passwordController.text.isEmpty &&
                                     !_obscurePassword) {
@@ -369,25 +485,15 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                                 }
                                 setState(() {});
                               },
-                              suffixIcon:
-                                  _passwordController.text.trim().isNotEmpty
-                                  ? IconButton(
-                                      tooltip: _obscurePassword
-                                          ? 'Mostrar senha'
-                                          : 'Ocultar senha',
-                                      onPressed: () {
+                              suffixIcon: _passwordController.text.isNotEmpty
+                                  ? _buildPasswordSuffix(
+                                      length: _passwordController.text.length,
+                                      obscure: _obscurePassword,
+                                      onToggle: () {
                                         setState(() {
                                           _obscurePassword = !_obscurePassword;
                                         });
                                       },
-                                      icon: Icon(
-                                        _obscurePassword
-                                            ? Icons.visibility_off_outlined
-                                            : Icons.visibility_outlined,
-                                        color: Colors.white.withValues(
-                                          alpha: 0.6,
-                                        ),
-                                      ),
                                     )
                                   : null,
                             ),
@@ -399,6 +505,12 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                               icon: Icons.lock_person_outlined,
                               hint: 'Digite a mesma senha novamente',
                               obscureText: _obscureConfirmPassword,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.deny(RegExp(r'\s')),
+                                LengthLimitingTextInputFormatter(
+                                  _passwordMaxLength,
+                                ),
+                              ],
                               onChanged: (_) {
                                 if (_confirmPasswordController.text.isEmpty &&
                                     !_obscureConfirmPassword) {
@@ -410,27 +522,18 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                                 setState(() {});
                               },
                               suffixIcon:
-                                  _confirmPasswordController.text
-                                      .trim()
-                                      .isNotEmpty
-                                  ? IconButton(
-                                      tooltip: _obscureConfirmPassword
-                                          ? 'Mostrar senha'
-                                          : 'Ocultar senha',
-                                      onPressed: () {
+                                  _confirmPasswordController.text.isNotEmpty
+                                  ? _buildPasswordSuffix(
+                                      length: _confirmPasswordController
+                                          .text
+                                          .length,
+                                      obscure: _obscureConfirmPassword,
+                                      onToggle: () {
                                         setState(() {
                                           _obscureConfirmPassword =
                                               !_obscureConfirmPassword;
                                         });
                                       },
-                                      icon: Icon(
-                                        _obscureConfirmPassword
-                                            ? Icons.visibility_off_outlined
-                                            : Icons.visibility_outlined,
-                                        color: Colors.white.withValues(
-                                          alpha: 0.6,
-                                        ),
-                                      ),
                                     )
                                   : null,
                             ),
@@ -580,6 +683,7 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
     bool isOptional = false,
     Widget? suffixIcon,
     ValueChanged<String>? onChanged,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -596,6 +700,7 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
         controller: controller,
         keyboardType: keyboardType,
         obscureText: obscureText,
+        inputFormatters: inputFormatters,
         onChanged: onChanged,
         style: const TextStyle(color: Colors.white, fontSize: 16),
         decoration: InputDecoration(
@@ -653,5 +758,152 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
         ),
       ),
     );
+  }
+
+  Widget _buildNameCounterSuffix({required int length}) {
+    return SizedBox(
+      width: 74,
+      child: Center(
+        child: Text(
+          '$length/$_nameMaxLength',
+          style: TextStyle(
+            color: Colors.white.withValues(alpha: 0.6),
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPasswordSuffix({
+    required int length,
+    required bool obscure,
+    required VoidCallback onToggle,
+  }) {
+    return SizedBox(
+      width: 110,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '$length/$_passwordMaxLength',
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.6),
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          IconButton(
+            tooltip: obscure ? 'Mostrar senha' : 'Ocultar senha',
+            onPressed: onToggle,
+            icon: Icon(
+              obscure
+                  ? Icons.visibility_off_outlined
+                  : Icons.visibility_outlined,
+              color: Colors.white.withValues(alpha: 0.6),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RegisterNameFormatter extends TextInputFormatter {
+  const _RegisterNameFormatter({required this.maxLength});
+
+  final int maxLength;
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    var text = newValue.text;
+
+    // Evita espaços no início e colapsa múltiplos espaços em apenas um.
+    text = text.replaceFirst(RegExp(r'^ +'), '');
+    text = text.replaceAll(RegExp(r' {2,}'), ' ');
+
+    if (text.length > maxLength) {
+      text = text.substring(0, maxLength);
+    }
+
+    final baseOffset = math.max(
+      0,
+      math.min(text.length, newValue.selection.baseOffset),
+    );
+    final extentOffset = math.max(
+      0,
+      math.min(text.length, newValue.selection.extentOffset),
+    );
+
+    return TextEditingValue(
+      text: text,
+      selection: TextSelection(
+        baseOffset: baseOffset,
+        extentOffset: extentOffset,
+      ),
+      composing: TextRange.empty,
+    );
+  }
+}
+
+class _RegisterPhoneMaskFormatter extends TextInputFormatter {
+  const _RegisterPhoneMaskFormatter();
+
+  static const int _maxDigits = 11;
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final digitsOnly = newValue.text.replaceAll(RegExp(r'\D'), '');
+    final limitedDigits = digitsOnly.length > _maxDigits
+        ? digitsOnly.substring(0, _maxDigits)
+        : digitsOnly;
+
+    final masked = _applyMask(limitedDigits);
+
+    return TextEditingValue(
+      text: masked,
+      selection: TextSelection.collapsed(offset: masked.length),
+      composing: TextRange.empty,
+    );
+  }
+
+  String _applyMask(String digits) {
+    if (digits.isEmpty) return '';
+
+    final buffer = StringBuffer();
+    final areaEnd = math.min(2, digits.length);
+
+    buffer.write('(');
+    buffer.write(digits.substring(0, areaEnd));
+
+    if (digits.length >= 2) {
+      buffer.write(') ');
+    }
+
+    if (digits.length >= 3) {
+      buffer.write(digits[2]);
+    }
+
+    if (digits.length >= 4) {
+      buffer.write(' ');
+      final firstBlockEnd = math.min(7, digits.length);
+      buffer.write(digits.substring(3, firstBlockEnd));
+    }
+
+    if (digits.length >= 8) {
+      buffer.write('-');
+      final secondBlockEnd = math.min(11, digits.length);
+      buffer.write(digits.substring(7, secondBlockEnd));
+    }
+
+    return buffer.toString();
   }
 }

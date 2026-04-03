@@ -326,8 +326,8 @@ class _UsersPageState extends State<UsersPage> {
           final cs = Theme.of(context).colorScheme;
 
           return ServflowAdminShell(
-            title: 'Equipe',
-            subtitle: 'Usuários, cargos e lojas',
+            title: 'Funcionários',
+            subtitle: 'Usuários da empresa, cargos e lojas',
             userName: user?.name ?? 'Administrador',
             currentRoute: '/users',
             actions: [

@@ -12,6 +12,8 @@ import '../../features/admin/pages/invites_page.dart';
 import '../../features/profile/pages/profile_page.dart';
 import '../../features/settings/pages/settings_page.dart';
 import '../../features/tickets/pages/tickets_page.dart';
+import '../../features/attendant/pages/attendant_departments_page.dart';
+import '../../features/attendant/pages/attendant_team_page.dart';
 import '../../features/auth/providers/auth_provider.dart';
 import '../widgets/app_shell.dart';
 
@@ -57,6 +59,19 @@ class AppRoutes {
           GoRoute(
             path: '/tickets',
             builder: (context, state) => const TicketsPage(),
+          ),
+          GoRoute(
+            path: '/my-attendances',
+            builder: (context, state) =>
+                const TicketsPage(mode: TicketsPageMode.attendantMine),
+          ),
+          GoRoute(
+            path: '/departments-overview',
+            builder: (context, state) => const AttendantDepartmentsPage(),
+          ),
+          GoRoute(
+            path: '/team',
+            builder: (context, state) => const AttendantTeamPage(),
           ),
           GoRoute(
             path: '/company',

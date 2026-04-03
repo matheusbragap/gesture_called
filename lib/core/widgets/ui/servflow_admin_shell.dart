@@ -25,38 +25,20 @@ class ServflowAdminShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-
     return Scaffold(
       floatingActionButton: floatingActionButton,
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              cs.surface,
-              cs.primaryContainer.withValues(alpha: 0.35),
-              cs.secondaryContainer.withValues(alpha: 0.25),
-            ],
-            stops: const [0.0, 0.55, 1.0],
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SfContentHeader(
-                title: title,
-                subtitle: subtitle,
-                actions: actions,
-                padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
-              ),
-              Expanded(child: body),
-            ],
-          ),
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SfContentHeader(
+              title: title,
+              subtitle: subtitle,
+              actions: actions,
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
+            ),
+            Expanded(child: body),
+          ],
         ),
       ),
     );
