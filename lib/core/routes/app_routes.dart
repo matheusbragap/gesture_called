@@ -50,7 +50,8 @@ class AppRoutes {
             RegisterDetailsPage(email: state.extra as String),
       ),
       ShellRoute(
-        builder: (context, state, child) => AppShell(child: child),
+        builder: (context, state, child) =>
+            AppShell(currentRoute: state.matchedLocation, child: child),
         routes: [
           GoRoute(path: '/home', builder: (context, state) => const HomePage()),
           GoRoute(

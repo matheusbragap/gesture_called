@@ -9,8 +9,8 @@ abstract final class AppTheme {
     final colorScheme = ColorScheme.fromSeed(
       seedColor: AppColors.seed,
       brightness: Brightness.light,
-      surface: const Color(0xFFF8FAFC),
-      surfaceContainerHighest: const Color(0xFFE2E8F0),
+      surface: AppColors.surface,
+      surfaceContainerHighest: AppColors.surfaceMuted,
     );
 
     final baseText = GoogleFonts.plusJakartaSansTextTheme();
@@ -18,7 +18,7 @@ abstract final class AppTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
-      scaffoldBackgroundColor: colorScheme.surface,
+      scaffoldBackgroundColor: AppColors.surface,
       textTheme: baseText.copyWith(
         headlineLarge: baseText.headlineLarge?.copyWith(
           fontWeight: FontWeight.w800,
@@ -29,7 +29,9 @@ abstract final class AppTheme {
           letterSpacing: -0.3,
         ),
         titleLarge: baseText.titleLarge?.copyWith(fontWeight: FontWeight.w700),
-        titleMedium: baseText.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+        titleMedium: baseText.titleMedium?.copyWith(
+          fontWeight: FontWeight.w600,
+        ),
         bodyLarge: baseText.bodyLarge?.copyWith(height: 1.45),
         bodyMedium: baseText.bodyMedium?.copyWith(height: 1.4),
       ),
@@ -37,12 +39,16 @@ abstract final class AppTheme {
         elevation: 0,
         centerTitle: false,
         scrolledUnderElevation: 0,
-        backgroundColor: colorScheme.surface,
+        backgroundColor: AppColors.surface,
         foregroundColor: colorScheme.onSurface,
         titleTextStyle: baseText.titleLarge?.copyWith(
           fontWeight: FontWeight.w700,
           color: colorScheme.onSurface,
         ),
+      ),
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       cardTheme: CardThemeData(
         elevation: 0,
@@ -84,15 +90,16 @@ abstract final class AppTheme {
           borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide(color: colorScheme.primary, width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: colorScheme.primary,
         foregroundColor: colorScheme.onPrimary,
         elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
     );
   }

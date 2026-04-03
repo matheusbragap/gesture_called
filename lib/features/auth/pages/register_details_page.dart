@@ -164,9 +164,9 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                const Color(0xFF0F172A),
-                const Color(0xFF1E1B4B),
-                const Color(0xFF2D1B69),
+                const Color(0xFF131C27),
+                const Color(0xFF1A2735),
+                const Color(0xFF243647),
               ],
               stops: const [0.0, 0.5, 1.0],
             ),
@@ -202,7 +202,7 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          const Color(0xFF8B5CF6).withValues(alpha: 0.1),
+                          const Color(0xFF3F5F7F).withValues(alpha: 0.1),
                           Colors.transparent,
                         ],
                       ),
@@ -219,7 +219,7 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          const Color(0xFF6366F1).withValues(alpha: 0.05),
+                          const Color(0xFF6B879E).withValues(alpha: 0.05),
                           Colors.transparent,
                         ],
                       ),
@@ -301,10 +301,10 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                                 gradient: LinearGradient(
                                   colors: [
                                     const Color(
-                                      0xFF8B5CF6,
+                                      0xFF3F5F7F,
                                     ).withValues(alpha: 0.2),
                                     const Color(
-                                      0xFF6366F1,
+                                      0xFF6B879E,
                                     ).withValues(alpha: 0.2),
                                   ],
                                 ),
@@ -446,8 +446,8 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                                 decoration: BoxDecoration(
                                   gradient: const LinearGradient(
                                     colors: [
-                                      Color(0xFF8B5CF6),
-                                      Color(0xFF6366F1),
+                                      Color(0xFF3F5F7F),
+                                      Color(0xFF6B879E),
                                     ],
                                   ),
                                   borderRadius: BorderRadius.circular(16),
@@ -456,7 +456,7 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                                       : [
                                           BoxShadow(
                                             color: const Color(
-                                              0xFF8B5CF6,
+                                              0xFF3F5F7F,
                                             ).withValues(alpha: 0.4),
                                             blurRadius: 12,
                                             offset: const Offset(0, 4),
@@ -528,7 +528,7 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                                     TextSpan(
                                       text: 'Termos de Uso',
                                       style: TextStyle(
-                                        color: const Color(0xFF8B5CF6),
+                                        color: const Color(0xFF3F5F7F),
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -536,7 +536,7 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
                                     TextSpan(
                                       text: 'Política de Privacidade',
                                       style: TextStyle(
-                                        color: const Color(0xFF8B5CF6),
+                                        color: const Color(0xFF3F5F7F),
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -644,7 +644,7 @@ class _RegisterDetailsPageState extends State<RegisterDetailsPage>
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(color: Color(0xFF8B5CF6), width: 2),
+            borderSide: const BorderSide(color: Color(0xFF3F5F7F), width: 2),
           ),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 20,

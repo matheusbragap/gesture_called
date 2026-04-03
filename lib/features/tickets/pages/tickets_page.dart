@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/user_roles.dart';
+import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/ui/sf_content_header.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../admin/widgets/no_company_banner.dart';
@@ -48,7 +49,7 @@ class _TicketsPageState extends State<TicketsPage> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Colors.blue.shade900, Colors.purple.shade900],
+            colors: const [AppColors.ink900, AppColors.ink700],
           ),
         ),
         child: SafeArea(
@@ -102,9 +103,7 @@ class _TicketsPageState extends State<TicketsPage> {
                     if (ticketsState.loadingTickets &&
                         ticketsState.tickets.isEmpty) {
                       return const Center(
-                        child: CircularProgressIndicator(
-                          color: Color(0xFF8B5CF6),
-                        ),
+                        child: CircularProgressIndicator(color: AppColors.seed),
                       );
                     }
                     if (ticketsState.errorMessage != null &&
@@ -189,7 +188,7 @@ class _TicketsPageState extends State<TicketsPage> {
               },
               label: const Text('Novo Chamado'),
               icon: const Icon(Icons.add),
-              backgroundColor: const Color(0xFF8B5CF6),
+              backgroundColor: AppColors.seed,
               foregroundColor: Colors.white,
             )
           : null,
@@ -268,7 +267,7 @@ class _TicketCard extends StatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF8B5CF6).withValues(alpha: 0.35),
+                      color: AppColors.seed.withValues(alpha: 0.35),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(

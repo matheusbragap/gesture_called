@@ -3,13 +3,15 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../features/auth/providers/auth_provider.dart';
 import '../constants/user_roles.dart';
+import '../theme/app_colors.dart';
 
 enum _ProfileMenuAction { account, logout }
 
 class AppShell extends StatefulWidget {
   final Widget child;
+  final String currentRoute;
 
-  const AppShell({super.key, required this.child});
+  const AppShell({super.key, required this.child, required this.currentRoute});
 
   @override
   State<AppShell> createState() => _AppShellState();
@@ -17,6 +19,7 @@ class AppShell extends StatefulWidget {
 
 class _AppShellState extends State<AppShell> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  String? _hoveredRoute;
 
   Future<void> _handleLogout() async {
     final auth = context.read<AuthProvider>();
@@ -43,23 +46,34 @@ class _AppShellState extends State<AppShell> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
+        backgroundColor: AppColors.seed,
+        foregroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
+        flexibleSpace: const DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [AppColors.seed, AppColors.accent],
+            ),
+          ),
+        ),
         leading: IconButton(
           icon: const Icon(Icons.menu),
           onPressed: () => _scaffoldKey.currentState?.openDrawer(),
         ),
-        title: const Text('ServFlow'),
+        title: const Text(
+          'ServFlow',
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
         actions: [
           PopupMenuButton<_ProfileMenuAction>(
             tooltip: 'Perfil',
             onSelected: _handleProfileMenuSelection,
-            icon: CircleAvatar(
+            icon: const CircleAvatar(
               radius: 16,
-              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-              child: Icon(
-                Icons.person_outline,
-                size: 18,
-                color: Theme.of(context).colorScheme.onPrimaryContainer,
-              ),
+              backgroundColor: Color(0x33FFFFFF),
+              child: Icon(Icons.person_outline, size: 18, color: Colors.white),
             ),
             itemBuilder: (context) => const [
               PopupMenuItem<_ProfileMenuAction>(
@@ -87,94 +101,401 @@ class _AppShellState extends State<AppShell> {
           const SizedBox(width: 8),
         ],
       ),
-      drawer: _buildDrawer(context, user),
+      drawer: _buildDrawer(context, user, widget.currentRoute),
       body: widget.child,
     );
   }
 
-  Widget _buildDrawer(BuildContext context, dynamic user) {
+  Widget _buildDrawer(BuildContext context, dynamic user, String currentRoute) {
+    final initials = _nameInitials(user?.name as String?);
+    final roleLabel = _roleLabel(user?.role as String?);
+    final currentPageLabel = _routeLabel(currentRoute);
+
     return Drawer(
-      child: ListView(
-        children: [
-          DrawerHeader(child: Text(user?.name ?? 'Usuário')),
-          ListTile(
-            leading: const Icon(Icons.home_outlined),
-            title: const Text('Início'),
-            onTap: () {
-              Navigator.pop(context);
-              context.go('/home');
-            },
+      elevation: 0,
+      width: 330,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.horizontal(right: Radius.circular(26)),
+      ),
+      child: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [AppColors.ink900, AppColors.ink800],
           ),
-          ListTile(
-            leading: const Icon(Icons.mail_outline),
-            title: const Text('Convites'),
-            onTap: () {
-              Navigator.pop(context);
-              context.go('/invites');
-            },
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(18, 18, 18, 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.14),
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.2),
+                            ),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            initials,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                user?.name ?? 'Usuário',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                roleLabel,
+                                style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.7),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(14),
+                        color: Colors.white.withValues(alpha: 0.1),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.14),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.radio_button_checked_rounded,
+                            size: 14,
+                            color: Colors.white.withValues(alpha: 0.82),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Você está em: $currentPageLabel',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.82),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 4),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  children: [
+                    _buildDrawerItem(
+                      context: context,
+                      route: '/home',
+                      label: 'Início',
+                      icon: Icons.home_outlined,
+                      currentRoute: currentRoute,
+                      onTap: () {
+                        Navigator.pop(context);
+                        context.go('/home');
+                      },
+                    ),
+                    _buildDrawerItem(
+                      context: context,
+                      route: '/invites',
+                      label: 'Convites',
+                      icon: Icons.mail_outline,
+                      currentRoute: currentRoute,
+                      onTap: () {
+                        Navigator.pop(context);
+                        context.go('/invites');
+                      },
+                    ),
+                    _buildDrawerItem(
+                      context: context,
+                      route: '/settings',
+                      label: 'Configurações',
+                      icon: Icons.settings_outlined,
+                      currentRoute: currentRoute,
+                      onTap: () {
+                        Navigator.pop(context);
+                        context.go('/settings');
+                      },
+                    ),
+                    if (user?.role == UserRoles.admin) ...[
+                      _buildDrawerItem(
+                        context: context,
+                        route: '/company',
+                        label: 'Empresa',
+                        icon: Icons.business,
+                        currentRoute: currentRoute,
+                        onTap: () {
+                          Navigator.pop(context);
+                          context.go('/company');
+                        },
+                      ),
+                      _buildDrawerItem(
+                        context: context,
+                        route: '/departments',
+                        label: 'Lojas (Departamentos)',
+                        icon: Icons.store,
+                        currentRoute: currentRoute,
+                        onTap: () {
+                          Navigator.pop(context);
+                          context.go('/departments');
+                        },
+                      ),
+                      _buildDrawerItem(
+                        context: context,
+                        route: '/categories',
+                        label: 'Categorias',
+                        icon: Icons.category,
+                        currentRoute: currentRoute,
+                        onTap: () {
+                          Navigator.pop(context);
+                          context.go('/categories');
+                        },
+                      ),
+                      _buildDrawerItem(
+                        context: context,
+                        route: '/users',
+                        label: 'Usuários',
+                        icon: Icons.people,
+                        currentRoute: currentRoute,
+                        onTap: () {
+                          Navigator.pop(context);
+                          context.go('/users');
+                        },
+                      ),
+                    ],
+                    if (user != null && user.role != UserRoles.iddle)
+                      _buildDrawerItem(
+                        context: context,
+                        route: '/tickets',
+                        label: 'Chamados',
+                        icon: Icons.assignment,
+                        currentRoute: currentRoute,
+                        onTap: () {
+                          Navigator.pop(context);
+                          context.go('/tickets');
+                        },
+                      ),
+                    const SizedBox(height: 6),
+                    Divider(
+                      color: Colors.white.withValues(alpha: 0.14),
+                      height: 24,
+                    ),
+                    _buildDrawerItem(
+                      context: context,
+                      route: '/logout',
+                      label: 'Sair',
+                      icon: Icons.logout,
+                      currentRoute: currentRoute,
+                      destructive: true,
+                      onTap: () async {
+                        Navigator.pop(context);
+                        await _handleLogout();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          ListTile(
-            leading: const Icon(Icons.settings_outlined),
-            title: const Text('Configurações'),
-            onTap: () {
-              Navigator.pop(context);
-              context.go('/settings');
-            },
-          ),
-          if (user?.role == UserRoles.admin) ...[
-            ListTile(
-              leading: const Icon(Icons.business),
-              title: const Text('Empresa'),
-              onTap: () {
-                Navigator.pop(context);
-                context.go('/company');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.store),
-              title: const Text('Lojas (Departamentos)'),
-              onTap: () {
-                Navigator.pop(context);
-                context.go('/departments');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.category),
-              title: const Text('Categorias'),
-              onTap: () {
-                Navigator.pop(context);
-                context.go('/categories');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.people),
-              title: const Text('Usuários'),
-              onTap: () {
-                Navigator.pop(context);
-                context.go('/users');
-              },
-            ),
-          ],
-          if (user != null && user.role != UserRoles.iddle)
-            ListTile(
-              leading: const Icon(Icons.assignment),
-              title: const Text('Chamados'),
-              onTap: () {
-                Navigator.pop(context);
-                context.go('/tickets');
-              },
-            ),
-          const Divider(height: 24),
-          ListTile(
-            leading: const Icon(Icons.logout),
-            title: const Text('Sair'),
-            onTap: () async {
-              Navigator.pop(context);
-              await _handleLogout();
-            },
-          ),
-        ],
+        ),
       ),
     );
+  }
+
+  Widget _buildDrawerItem({
+    required BuildContext context,
+    required String route,
+    required String label,
+    required IconData icon,
+    required String currentRoute,
+    required VoidCallback onTap,
+    bool destructive = false,
+  }) {
+    final isActive = _isRouteActive(currentRoute, route);
+    final isHovered = _hoveredRoute == route;
+    final foreground = destructive
+        ? Colors.white.withValues(alpha: 0.86)
+        : isActive
+        ? Colors.white
+        : Colors.white.withValues(alpha: 0.86);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(14),
+          onTap: onTap,
+          onHover: (hovering) {
+            setState(() {
+              _hoveredRoute = hovering ? route : null;
+            });
+          },
+          splashColor: Colors.white.withValues(alpha: 0.08),
+          highlightColor: Colors.white.withValues(alpha: 0.06),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            curve: Curves.easeOut,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(14),
+              color: destructive
+                  ? (isHovered
+                        ? AppColors.danger.withValues(alpha: 0.35)
+                        : AppColors.danger.withValues(alpha: 0.2))
+                  : isActive
+                  ? Colors.white.withValues(alpha: 0.2)
+                  : isHovered
+                  ? Colors.white.withValues(alpha: 0.12)
+                  : Colors.transparent,
+              border: Border.all(
+                color: destructive
+                    ? AppColors.danger.withValues(alpha: 0.38)
+                    : isActive
+                    ? Colors.white.withValues(alpha: 0.26)
+                    : Colors.white.withValues(alpha: 0.08),
+              ),
+              boxShadow: isActive
+                  ? [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.14),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Row(
+              children: [
+                Icon(icon, color: foreground, size: 20),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      color: foreground,
+                      fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+                if (isActive)
+                  Container(
+                    width: 7,
+                    height: 7,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  bool _isRouteActive(String currentRoute, String route) {
+    if (route == '/logout') return false;
+    if (route == '/home') return currentRoute == route;
+    return currentRoute == route || currentRoute.startsWith('$route/');
+  }
+
+  String _routeLabel(String route) {
+    switch (route) {
+      case '/home':
+        return 'Início';
+      case '/invites':
+        return 'Convites';
+      case '/settings':
+        return 'Configurações';
+      case '/company':
+        return 'Empresa';
+      case '/departments':
+        return 'Lojas';
+      case '/categories':
+        return 'Categorias';
+      case '/users':
+        return 'Usuários';
+      case '/tickets':
+        return 'Chamados';
+      case '/profile':
+        return 'Conta';
+      default:
+        return 'Página';
+    }
+  }
+
+  String _nameInitials(String? name) {
+    if (name == null || name.trim().isEmpty) return 'US';
+    final parts = name.trim().split(RegExp(r'\s+'));
+    if (parts.length == 1) {
+      return parts.first
+          .substring(0, parts.first.length >= 2 ? 2 : 1)
+          .toUpperCase();
+    }
+    final first = parts.first.isNotEmpty ? parts.first[0] : '';
+    final last = parts.last.isNotEmpty ? parts.last[0] : '';
+    return '$first$last'.toUpperCase();
+  }
+
+  String _roleLabel(String? role) {
+    switch (role) {
+      case UserRoles.admin:
+        return 'Administrador';
+      case UserRoles.attendant:
+        return 'Atendente';
+      case UserRoles.employee:
+        return 'Funcionário';
+      case UserRoles.iddle:
+        return 'Sem empresa';
+      default:
+        return 'Perfil não definido';
+    }
   }
 }

@@ -212,14 +212,14 @@ class _IddleOptionCard extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: const LinearGradient(
               colors: [
-                Color(0xFF8B5CF6),
-                Color(0xFF6366F1),
+                Color(0xFF3F5F7F),
+                Color(0xFF6B879E),
               ],
             ),
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF8B5CF6).withValues(alpha: 0.2),
+                color: const Color(0xFF3F5F7F).withValues(alpha: 0.2),
                 blurRadius: 12,
                 offset: const Offset(0, 4),
               ),
@@ -294,7 +294,7 @@ class _DashboardCard extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 32, color: const Color(0xFF8B5CF6)),
+              Icon(icon, size: 32, color: const Color(0xFF3F5F7F)),
               const SizedBox(height: 8),
               Text(
                 title,

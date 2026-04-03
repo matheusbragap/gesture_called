@@ -136,7 +136,7 @@ class _CompanyPageState extends State<CompanyPage> {
                         FilledButton(
                           onPressed: _submitting ? null : _create,
                           style: FilledButton.styleFrom(
-                            backgroundColor: const Color(0xFF8B5CF6),
+                            backgroundColor: const Color(0xFF3F5F7F),
                             padding: const EdgeInsets.symmetric(vertical: 16),
                           ),
                           child: _submitting
@@ -351,7 +351,7 @@ class _ExistingCompanyState extends State<_ExistingCompany> {
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   leading: const CircleAvatar(
-                    backgroundColor: Color(0xFF8B5CF6),
+                    backgroundColor: Color(0xFF3F5F7F),
                     child: Icon(Icons.business, color: Colors.white),
                   ),
                   title: Text(
@@ -372,7 +372,7 @@ class _ExistingCompanyState extends State<_ExistingCompany> {
                   icon: const Icon(Icons.edit_outlined),
                   label: const Text('Editar dados da empresa'),
                   style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xFF8B5CF6),
+                    backgroundColor: const Color(0xFF3F5F7F),
                   ),
                 ),
                 const SizedBox(height: 12),

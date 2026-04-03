@@ -60,9 +60,9 @@ class _OnboardingPageState extends State<OnboardingPage>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              const Color(0xFF0F172A),
-              const Color(0xFF1E1B4B),
-              const Color(0xFF2D1B69),
+              const Color(0xFF131C27),
+              const Color(0xFF1A2735),
+              const Color(0xFF243647),
             ],
             stops: const [0.0, 0.5, 1.0],
           ),
@@ -98,7 +98,7 @@ class _OnboardingPageState extends State<OnboardingPage>
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
                       colors: [
-                        const Color(0xFF8B5CF6).withValues(alpha: 0.1),
+                        const Color(0xFF3F5F7F).withValues(alpha: 0.1),
                         Colors.transparent,
                       ],
                     ),
@@ -131,13 +131,13 @@ class _OnboardingPageState extends State<OnboardingPage>
                                     shape: BoxShape.circle,
                                     gradient: const LinearGradient(
                                       colors: [
-                                        Color(0xFF8B5CF6),
-                                        Color(0xFF6366F1),
+                                        Color(0xFF3F5F7F),
+                                        Color(0xFF6B879E),
                                       ],
                                     ),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: const Color(0xFF8B5CF6)
+                                        color: const Color(0xFF3F5F7F)
                                             .withValues(alpha: 0.3),
                                         blurRadius: 20,
                                         spreadRadius: 5,
@@ -266,7 +266,7 @@ class _OptionCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF8B5CF6).withValues(alpha: 0.2),
+                color: const Color(0xFF3F5F7F).withValues(alpha: 0.2),
                 blurRadius: 12,
                 offset: const Offset(0, 4),
               ),
