@@ -464,6 +464,62 @@ class _AppShellState extends State<AppShell> {
                           context.go('/settings');
                         },
                       ),
+                    ] else if (user?.role == UserRoles.employee) ...[
+                      _buildDrawerItem(
+                        context: context,
+                        route: '/home',
+                        label: 'Início',
+                        icon: Icons.home_outlined,
+                        currentRoute: currentRoute,
+                        onTap: () {
+                          Navigator.pop(context);
+                          context.go('/home');
+                        },
+                      ),
+                      _buildDrawerItem(
+                        context: context,
+                        route: '/tickets',
+                        label: 'Chamados',
+                        icon: Icons.assignment_outlined,
+                        currentRoute: currentRoute,
+                        onTap: () {
+                          Navigator.pop(context);
+                          context.go('/tickets');
+                        },
+                      ),
+                      _buildDrawerItem(
+                        context: context,
+                        route: '/team',
+                        label: 'Equipe',
+                        icon: Icons.groups_outlined,
+                        currentRoute: currentRoute,
+                        onTap: () {
+                          Navigator.pop(context);
+                          context.go('/team');
+                        },
+                      ),
+                      _buildDrawerItem(
+                        context: context,
+                        route: '/invites',
+                        label: 'Meus convites',
+                        icon: Icons.mail_outline,
+                        currentRoute: currentRoute,
+                        onTap: () {
+                          Navigator.pop(context);
+                          context.go('/invites');
+                        },
+                      ),
+                      _buildDrawerItem(
+                        context: context,
+                        route: '/settings',
+                        label: 'Configurações',
+                        icon: Icons.settings_outlined,
+                        currentRoute: currentRoute,
+                        onTap: () {
+                          Navigator.pop(context);
+                          context.go('/settings');
+                        },
+                      ),
                     ] else ...[
                       _buildDrawerItem(
                         context: context,
@@ -498,20 +554,16 @@ class _AppShellState extends State<AppShell> {
                           context.go('/settings');
                         },
                       ),
-                      if (user != null && user.role != UserRoles.iddle)
-                        _buildDrawerItem(
-                          context: context,
-                          route: '/tickets',
-                          label: 'Chamados',
-                          icon: Icons.assignment,
-                          currentRoute: currentRoute,
-                          onTap: () {
-                            Navigator.pop(context);
-                            context.go('/tickets');
-                          },
-                        ),
                     ],
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 12),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
                     Divider(
                       color: Colors.white.withValues(alpha: 0.14),
                       height: 24,

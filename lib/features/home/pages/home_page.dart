@@ -166,12 +166,30 @@ class _HomePageState extends State<HomePage> {
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 24),
-          ListTile(
-            leading: const Icon(Icons.assignment),
-            title: const Text('Meus Chamados'),
-            subtitle: const Text('Abrir e gerenciar seus chamados'),
-            trailing: const Icon(Icons.arrow_forward),
-            onTap: () => context.go('/tickets'),
+          Text(
+            'Dashboard do Funcionário',
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          GridView.count(
+            crossAxisCount: 2,
+            shrinkWrap: true,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            children: [
+              _DashboardCard(
+                icon: Icons.assignment_outlined,
+                title: 'Chamados',
+                onTap: () => context.go('/tickets'),
+              ),
+              _DashboardCard(
+                icon: Icons.groups_outlined,
+                title: 'Equipe',
+                onTap: () => context.go('/team'),
+              ),
+            ],
           ),
         ],
       ),

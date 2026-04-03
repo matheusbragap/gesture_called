@@ -19,7 +19,7 @@ class AttendantTeamPage extends StatefulWidget {
 class _AttendantTeamPageState extends State<AttendantTeamPage> {
   final _usersRepo = AdminUsersRepository();
 
-  List<Map<String, dynamic>> _attendants = [];
+  List<Map<String, dynamic>> _teamMembers = [];
   bool _loading = true;
   String? _error;
 
@@ -32,13 +32,15 @@ class _AttendantTeamPageState extends State<AttendantTeamPage> {
   Future<void> _load() async {
     final user = context.read<AuthProvider>().user;
     final companyId = user?.companyId;
+    final departmentId = user?.departmentId;
+    final isEmployee = user?.role == UserRoles.employee;
 
     if (companyId == null) {
       if (!mounted) return;
       setState(() {
         _loading = false;
         _error = null;
-        _attendants = [];
+        _teamMembers = [];
       });
       return;
     }
@@ -51,19 +53,27 @@ class _AttendantTeamPageState extends State<AttendantTeamPage> {
 
     try {
       final users = await _usersRepo.listAllInCompany(companyId);
-      final attendants = users
-          .where((row) => row['role'] == UserRoles.attendant)
-          .toList();
+
+      final members = isEmployee
+          ? users.where((row) {
+              if (departmentId == null) return false;
+              final rawDepartmentId = row['department_id'];
+              if (rawDepartmentId is! num) return false;
+              return rawDepartmentId.toInt() == departmentId;
+            }).toList()
+          : users.where((row) => row['role'] == UserRoles.attendant).toList();
 
       if (!mounted) return;
       setState(() {
-        _attendants = attendants;
+        _teamMembers = members;
         _loading = false;
       });
     } catch (_) {
       if (!mounted) return;
       setState(() {
-        _error = 'Erro ao carregar equipe de atendentes.';
+        _error = isEmployee
+            ? 'Erro ao carregar equipe do seu departamento.'
+            : 'Erro ao carregar equipe de atendentes.';
         _loading = false;
       });
     }
@@ -81,17 +91,22 @@ class _AttendantTeamPageState extends State<AttendantTeamPage> {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final user = context.watch<AuthProvider>().user;
+    final isEmployee = user?.role == UserRoles.employee;
     final hasCompany = user?.companyId != null;
+    final hasDepartment = user?.departmentId != null;
+    final subtitle = isEmployee
+        ? 'Usuários do mesmo departamento que você.'
+        : 'Atendentes da sua empresa.';
 
     return Scaffold(
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SfContentHeader(
+            SfContentHeader(
               title: 'Equipe',
-              subtitle: 'Atendentes da sua empresa.',
-              padding: EdgeInsets.fromLTRB(20, 8, 20, 12),
+              subtitle: subtitle,
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
             ),
             Expanded(
               child: Padding(
@@ -100,13 +115,27 @@ class _AttendantTeamPageState extends State<AttendantTeamPage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     if (!hasCompany) const NoCompanyBanner(forAdmin: false),
+                    if (hasCompany && isEmployee && !hasDepartment)
+                      SfInfoCard(
+                        icon: Icons.info_outline_rounded,
+                        tint: cs.secondary,
+                        child: Text(
+                          'Você ainda não está vinculado a um departamento. '
+                          'Peça para um administrador realizar a vinculação para ver sua equipe.',
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(color: cs.onSurfaceVariant),
+                        ),
+                      ),
                     if (hasCompany) ...[
                       SfInfoCard(
                         icon: Icons.groups_rounded,
                         tint: cs.secondary,
                         child: Text(
-                          'Lista da equipe de atendimento da empresa com o '
-                          'departamento associado de cada atendente.',
+                          isEmployee
+                              ? 'Lista de usuários do mesmo departamento '
+                                    'que o seu, com seus cargos e status.'
+                              : 'Lista da equipe de atendimento da empresa '
+                                    'com o departamento associado de cada atendente.',
                           style: Theme.of(context).textTheme.bodyMedium
                               ?.copyWith(color: cs.onSurfaceVariant),
                         ),
@@ -127,16 +156,20 @@ class _AttendantTeamPageState extends State<AttendantTeamPage> {
                     Expanded(
                       child: !hasCompany
                           ? const SizedBox.shrink()
+                          : isEmployee && !hasDepartment
+                          ? const SizedBox.shrink()
                           : _loading
                               ? Center(
                                   child: CircularProgressIndicator(
                                     color: cs.primary,
                                   ),
                                 )
-                              : _attendants.isEmpty
+                              : _teamMembers.isEmpty
                                   ? Center(
                                       child: Text(
-                                        'Nenhum atendente encontrado nesta empresa.',
+                                        isEmployee
+                                            ? 'Nenhum usuário encontrado no seu departamento.'
+                                            : 'Nenhum atendente encontrado nesta empresa.',
                                         style: TextStyle(
                                           color: cs.onSurfaceVariant,
                                         ),
@@ -146,14 +179,14 @@ class _AttendantTeamPageState extends State<AttendantTeamPage> {
                                       padding: const EdgeInsets.only(
                                         bottom: 24,
                                       ),
-                                      itemCount: _attendants.length,
+                                      itemCount: _teamMembers.length,
                                       separatorBuilder: (context, index) =>
                                           const SizedBox(height: 10),
                                       itemBuilder: (context, index) {
-                                        final row = _attendants[index];
-                                        final name =
-                                            row['name'] as String? ?? 'Atendente';
+                                        final row = _teamMembers[index];
+                                        final name = row['name'] as String? ?? 'Usuário';
                                         final email = row['email'] as String?;
+                                        final role = row['role'] as String?;
                                         final department = _departmentName(row);
                                         final isActive =
                                             (row['isActive'] as bool?) ?? true;
@@ -162,13 +195,17 @@ class _AttendantTeamPageState extends State<AttendantTeamPage> {
                                         if (email != null && email.isNotEmpty) {
                                           subtitleParts.add(email);
                                         }
+                                        final roleLabel = _roleLabel(role);
+                                        subtitleParts.add('Cargo: $roleLabel');
                                         if (department != null &&
-                                            department.isNotEmpty) {
+                                            department.isNotEmpty &&
+                                            !isEmployee) {
                                           subtitleParts.add('Loja: $department');
                                         }
 
-                                        final initials =
-                                            name.trim().isEmpty ? 'AT' : name.trim()[0].toUpperCase();
+                                        final initials = name.trim().isEmpty
+                                            ? 'US'
+                                            : name.trim()[0].toUpperCase();
 
                                         return SfListTileCard(
                                           title: name,
@@ -238,5 +275,20 @@ class _AttendantTeamPageState extends State<AttendantTeamPage> {
         ),
       ),
     );
+  }
+
+  String _roleLabel(String? role) {
+    switch (role) {
+      case UserRoles.admin:
+        return 'Administrador';
+      case UserRoles.attendant:
+        return 'Atendente';
+      case UserRoles.employee:
+        return 'Funcionário';
+      case UserRoles.iddle:
+        return 'Sem empresa';
+      default:
+        return 'Não definido';
+    }
   }
 }
