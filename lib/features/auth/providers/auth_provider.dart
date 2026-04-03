@@ -7,6 +7,7 @@ class AuthProvider extends ChangeNotifier {
 
   UserModel? _user;
   String? _testingRoleOverride;
+  bool _isCheckingSession = false;
   bool _isLoading = false;
   String? _errorMessage;
 
@@ -18,7 +19,8 @@ class AuthProvider extends ChangeNotifier {
     }
     return current.copyWith(role: testingRole);
   }
-  bool get isLoading => _isLoading;
+  bool get isCheckingSession => _isCheckingSession;
+  bool get isLoading => _isLoading || _isCheckingSession;
   String? get errorMessage => _errorMessage;
   bool get isAuthenticated => _user != null;
 
@@ -46,11 +48,22 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> checkSession() async {
-    _user = await _repository.getCurrentUser();
-    if (_user == null) {
-      _testingRoleOverride = null;
-    }
+    _isCheckingSession = true;
+    _errorMessage = null;
     notifyListeners();
+
+    try {
+      _user = await _repository.getCurrentUser();
+      if (_user == null) {
+        _testingRoleOverride = null;
+      }
+    } catch (_) {
+      _user = null;
+      _testingRoleOverride = null;
+    } finally {
+      _isCheckingSession = false;
+      notifyListeners();
+    }
   }
 
   Future<bool> checkEmailExists(String email) async {
